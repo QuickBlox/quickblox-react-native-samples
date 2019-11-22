@@ -4,6 +4,7 @@ import {
   appStart,
   appStartFail,
   appStartSuccess,
+  connectionStateChanged,
 } from '../actionCreators'
 import {
   chatConnectThunk,
@@ -26,9 +27,10 @@ export const connectAndSubscribe = () => (dispatch, getState) => {
   const { auth } = getState()
   if (auth.user) {
     return dispatch(isChatConnected()).then(action => {
+      const { chat } = getState()
       const connected = action.payload
       let connectionPromise
-      if (connected) {
+      if (connected || chat.loading) {
         connectionPromise = Promise.resolve()
       } else {
         connectionPromise = dispatch(chatConnectThunk({
@@ -37,6 +39,7 @@ export const connectAndSubscribe = () => (dispatch, getState) => {
         }))
       }
       return connectionPromise.then(() => {
+        setupQBSettings().catch(() => false)
         dispatch(chatSubscribe())
       })
     })
@@ -56,3 +59,23 @@ export const trackAppState = (appState) => (dispatch, getState) => {
     dispatch(connectAndSubscribe())
   }
 }
+
+export const connectionStateHandler = info => (dispatch, getState) => {
+  const { app } = getState()
+  if (app.online !== info.isConnected) {
+    dispatch(connectionStateChanged(info.isConnected))
+  }
+}
+
+const setupQBSettings = () => new Promise((resolve, reject) => {
+  Promise.all([
+    QB.settings.initStreamManagement({
+      autoReconnect: true,
+      messageTimeout: 10,
+    }),
+    QB.settings.enableCarbons(),
+    QB.settings.enableAutoReconnect({ enable: true })
+  ])
+  .then(resolve)
+  .catch(reject)
+})

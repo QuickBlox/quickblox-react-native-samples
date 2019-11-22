@@ -160,14 +160,14 @@ export default class MessagesList extends React.PureComponent {
     if (unreadMessagesCount) {
       viewableItems
         .filter(item => item.index !== null)
-        .forEach(({ isViewable, item: { dialogId, id, readIds } }) => {
+        .forEach(({ isViewable, item: message }) => {
+          const { readIds = [] } = message
           const shouldMarkAsRead = (
             isViewable &&
-            readIds &&
             readIds.indexOf(currentUser.id) === -1
           )
           if (shouldMarkAsRead) {
-            markAsRead({ messageId: id, dialogId })
+            markAsRead(message)
           }
         })
     }

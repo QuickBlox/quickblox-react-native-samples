@@ -10,7 +10,6 @@ import { getMessages, markAsDelivered } from './messages'
 import Navigation from '../NavigationService'
 
 let dispatch
-let currentUser
 let _getState
 const subscriptions = []
 
@@ -23,7 +22,7 @@ function connectionEventHandler(event) {
 function receivedNewMessage(event) {
   const { type, payload } = event
   dispatch({ type, payload })
-  const { dialogs: { dialogs } } = _getState()
+  const { auth, dialogs: { dialogs } } = _getState()
   const dialog = dialogs.find(d => d.id === payload.dialogId)
   if (dialog) {
     dispatch(dialogEditSuccess({
@@ -32,14 +31,15 @@ function receivedNewMessage(event) {
       lastMessageDateSent: payload.dateSent,
       lastMessageUserId: payload.senderId
     }))
-    if (payload.senderId !== currentUser.id) {
-      dispatch(markAsDelivered({
-        dialogId: payload.dialogId,
-        messageId: payload.id,
-      }))
-      dispatch(dialogUnreadCountIncrement({
-        dialogId: payload.dialogId
-      }))
+    if (auth.user && payload.senderId !== auth.user.id) {
+      if (!payload.markable) {
+        dispatch(markAsDelivered(payload))
+      }
+      if (dialog.type !== QB.chat.DIALOG_TYPE.PUBLIC_CHAT) {
+        dispatch(dialogUnreadCountIncrement({
+          dialogId: payload.dialogId
+        }))
+      }
     }
   } else {
     // re-load dialogs to get new dialog(s) or update occupants list
@@ -58,7 +58,7 @@ function systemMessageHandler(event) {
   const { _id, notification_type, type: dialogType } = payload.properties
   // dialog might be deleted by owner
   if (dialogType === '3' && notification_type === '3') {
-    const route = Navigation.getCurrentRoute()
+    const route = Navigation.getCurrentRoute() || {}
     const { routeName, params = { dialog: {} } } = route
     if (routeName === 'Messages' && params.dialog.id === _id) {
       Navigation.navigate({ routeName: 'Dialogs' })
@@ -76,8 +76,9 @@ function userTypingHandler(event) {
 export function subscribe(dispatcher, getState) {
   dispatch = dispatcher
   _getState = getState
-  const { auth } = getState()
-  currentUser = auth.user
+  if (subscriptions.length === Object.keys(QB.chat.EVENT_TYPE).length) {
+    return
+  }
   const emitter = new NativeEventEmitter(QB.chat)
   const QBConnectionEvents = [
     QB.chat.EVENT_TYPE.CONNECTED,

@@ -34,7 +34,7 @@ const defaultQuery = {
   append: false,
   sort: {
     ascending: false,
-    field: QB.users.USERS_FILTER.FIELD.LAST_REQUEST_AT,
+    field: QB.users.USERS_FILTER.FIELD.UPDATED_AT,
     type: QB.users.USERS_FILTER.TYPE.DATE
   },
 }
@@ -70,7 +70,7 @@ export const getUsers = (query = defaultQuery) => (dispatch, getState) => {
       operationsCache[filterUserId] = true
     }
   }
-  const filter = Object.assign({}, defaultQuery, query, { page, perPage })
+  const filter = Object.assign({}, defaultQuery, { page, perPage }, query)
   dispatch(usersGet(filter))
   return QB
     .users

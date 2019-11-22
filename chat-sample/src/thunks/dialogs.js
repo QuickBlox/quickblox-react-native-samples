@@ -107,10 +107,11 @@ export const updateDialog = params => dispatch => {
     .chat
     .updateDialog(params)
     .then(dialog => {
+      const action = dispatch(dialogEditSuccess(dialog))
       if (params.addUsers && params.addUsers.length) {
         dispatch(notifySystemMessage(dialog.id, '2'))
       }
-      return dispatch(dialogEditSuccess(dialog))
+      return action
     })
     .catch(e => {
       showError('Failed to update dialog', e.message)

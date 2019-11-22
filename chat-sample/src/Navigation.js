@@ -3,6 +3,7 @@ import { createStackNavigator } from 'react-navigation-stack'
 
 import CheckAuth from './containers/CheckAuth'
 import Login from './containers/Auth/Login'
+import CheckConnection from './containers/CheckConnection'
 import Dialogs from './containers/Dialogs'
 import DialogsCreate1 from './containers/Dialogs/Create1'
 import DialogsCreate2 from './containers/Dialogs/Create2'
@@ -26,22 +27,27 @@ const AppNavigator = createSwitchNavigator({
     initialRouteName: 'Login',
     defaultNavigationOptions: navigationHeader,
   }),
-  Chat: createStackNavigator({
-    DialogsCreate1,
-    DialogsCreate2,
-    Dialogs,
-    DialogInfo,
-    AddOccupants,
-    Messages,
-    DeliveredTo,
-    ViewedBy,
-    ForwardTo,
-    ImageViewer,
-    VideoPlayer,
-    Info,
+  Chat: createSwitchNavigator({
+    CheckConnection,
+    Main: createStackNavigator({
+      DialogsCreate1,
+      DialogsCreate2,
+      Dialogs,
+      DialogInfo,
+      AddOccupants,
+      Messages,
+      DeliveredTo,
+      ViewedBy,
+      ForwardTo,
+      ImageViewer,
+      VideoPlayer,
+      Info,
+    }, {
+      initialRouteName: 'Dialogs',
+      defaultNavigationOptions: navigationHeader,
+    })
   }, {
-    initialRouteName: 'Dialogs',
-    defaultNavigationOptions: navigationHeader,
+    initialRouteName: 'CheckConnection'
   })
 }, {
   initialRouteName: 'CheckAuth'

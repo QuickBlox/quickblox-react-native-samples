@@ -4,7 +4,9 @@ import PushNotificationIOS from '@react-native-community/push-notification-ios'
 import { Platform } from 'react-native'
 import QB from 'quickblox-react-native-sdk'
 
+import { saveUdid, removeUdid } from './actionCreators'
 import gServices from '../android/app/google-services.json'
+import { store } from './store'
 import { colors } from './theme'
 
 /**
@@ -46,6 +48,12 @@ export const setupPushNotifications = () => {
     onRegister: function ({ token }) {
       QB.subscriptions
         .create({ deviceToken: token })
+        .then(subscriptions => {
+          const udid = subscriptions[0].deviceUdid
+          if (udid) {
+            store.dispatch(saveUdid(udid))
+          }
+        })
         .catch(e => showError(
           'Error occured while subscribing to push events',
           e.message
@@ -83,3 +91,22 @@ export const setupPushNotifications = () => {
     requestPermissions: true
   })
 }
+
+export const removePushSubscription = () => new Promise((resolve) => {
+  const { device: { udid } } = store.getState()
+  store.dispatch(removeUdid())
+  if (udid) {
+    QB.subscriptions
+      .get()
+      .then(subscriptions => {
+        subscriptions.forEach(subscription => {
+          if (subscription.deviceUdid === udid) {
+            QB.subscriptions.remove({ id: subscription.id })
+          }
+        })
+        resolve()
+      })
+  } else {
+    resolve()
+  }
+})

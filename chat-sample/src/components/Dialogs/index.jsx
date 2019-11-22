@@ -4,6 +4,7 @@ import { SafeAreaView } from 'react-navigation'
 
 import HeaderButton from '../HeaderButton'
 import DialogsList from '../../containers/Dialogs/List'
+import { removePushSubscription } from '../../NotificationService'
 import { chatUnsubscribe } from '../../thunks'
 import { ADD, INFO, EXIT } from '../../images'
 import styles from './styles'
@@ -114,14 +115,14 @@ class Dialogs extends React.Component {
 
   logout = () => {
     chatUnsubscribe()
-    Promise.all([
-      this.props.logout(),
-      this.props.disconnectFromChat(),
-    ]).then(result => {
-      if (!result || !result.error) {
-        this.props.navigation.navigate('CheckAuth')
-      }
-    })
+    removePushSubscription()
+      .then(() => this.props.logout())
+      .then(() => this.props.disconnectFromChat())
+      .then(result => {
+        if (!result || !result.error) {
+          this.props.navigation.navigate('CheckAuth')
+        }
+      })
   }
 
   goToDialog = dialog => this.props.navigation.navigate({

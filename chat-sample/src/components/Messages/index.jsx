@@ -1,5 +1,6 @@
 import React from 'react'
 import {
+  Dimensions,
   Image,
   KeyboardAvoidingView,
   Platform,
@@ -34,6 +35,24 @@ const localStyles = StyleSheet.create({
     marginRight: 10,
     width: 28,
   },
+})
+
+// taken from https://github.com/ptelad/react-native-iphone-x-helper/blob/master/index.js
+const isIphoneX = () => {
+  const { height, width } = Dimensions.get('window')
+  return (
+    Platform.OS === 'ios' &&
+    !Platform.isPad &&
+    !Platform.isTVOS &&
+    ((height === 812 || width === 812) || (height === 896 || width === 896))
+  )
+}
+
+const keyboardViewProps = Platform.select({
+  ios: {
+    behavior: 'padding',
+    keyboardVerticalOffset: isIphoneX() ? 54 : 64
+  }
 })
 
 export default class Messages extends React.PureComponent {
@@ -109,16 +128,15 @@ export default class Messages extends React.PureComponent {
   render() {
     const { id } = this.props.navigation.getParam('dialog', {})
     return (
-      <SafeAreaView style={styles.safeArea}>
-        <KeyboardAvoidingView
-          behavior={Platform.select({ ios: 'padding' })}
-          keyboardVerticalOffset={Platform.select({ ios: 85 })}
-          style={{ flex: 1 }}
-        >
+      <KeyboardAvoidingView
+        {...keyboardViewProps}
+        style={{ flex: 1 }}
+      >
+        <SafeAreaView style={styles.safeArea}>
           <MessagesList dialogId={id} />
           <MessageInput dialogId={id} />
-        </KeyboardAvoidingView>
-      </SafeAreaView>
+        </SafeAreaView>
+      </KeyboardAvoidingView>
     )
   }
 

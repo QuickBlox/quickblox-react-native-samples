@@ -64,7 +64,7 @@ export default class Filter extends React.Component {
       this.typingTimeout = undefined
     }
     this.typingTimeout = setTimeout(() => {
-      const { filter = '' } = this.props
+      const { filter = '', page } = this.props
       if (filter.trim().length === 0 || filter.trim().length > 2) {
         if (this.props.getUsers) {
           this.props.getUsers({
@@ -74,7 +74,7 @@ export default class Filter extends React.Component {
               type: QB.users.USERS_FILTER.TYPE.STRING,
               value: filter
             } : undefined,
-            limit: 100
+            page: filter && filter.trim().length ? page : 1,
           })
         }
       }

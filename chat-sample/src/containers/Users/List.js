@@ -1,7 +1,7 @@
 import { connect } from 'react-redux'
 
 import UsersList from '../../components/Users/List'
-import { usersSelect, usersSetPage } from '../../actionCreators'
+import { usersSelect } from '../../actionCreators'
 import { getUsers } from '../../thunks'
 
 const mapStateToProps = ({ auth, users }, { exclude = [] }) => ({
@@ -12,13 +12,14 @@ const mapStateToProps = ({ auth, users }, { exclude = [] }) => ({
   filter: users.filter,
   loading: users.loading,
   page: users.page,
+  perPage: users.perPage,
   selected: users.selected,
+  total: users.total,
 })
 
 const mapDispatchToProps = {
   getUsers,
   selectUser: usersSelect,
-  setPage: usersSetPage,
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(UsersList)

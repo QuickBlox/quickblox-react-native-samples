@@ -12,6 +12,7 @@
 #import <React/RCTRootView.h>
 #import "RNCPushNotificationIOS.h"
 #import <UserNotifications/UserNotifications.h>
+#import <Quickblox/Quickblox.h>
 
 @implementation AppDelegate
 
@@ -31,6 +32,8 @@
   [self.window makeKeyAndVisible];
   UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
   center.delegate = self;
+  QBSettings.logLevel = QBLogLevelDebug;
+  [QBSettings enableXMPPLogging];
   return YES;
 }
 

@@ -18,55 +18,46 @@ import {
   messageSystemSendFail,
   messageSystemSendSuccess,
 } from '../actionCreators'
-import { uploadFile } from './file'
 import { showError } from '../NotificationService'
 
 const MESSAGES_SORT = {
   ascending: false,
   field: QB.chat.MESSAGES_SORT.FIELD.DATE_SENT,
 }
-const markAsDeliveredQueue = {}
 const markAsReadQueue = {}
 
-export const markAsDelivered = ({ messageId, dialogId }) => dispatch => {
-  if (markAsDeliveredQueue[messageId]) {
-    return
-  } else {
-    markAsDeliveredQueue[messageId] = true
-  }
-  dispatch(messageMarkDelivered({ messageId, dialogId }))
+// since messages are sent with "markable: true" -
+// SDK will mark messages as delivered for us
+export const markAsDelivered = message => dispatch => {
+  dispatch(messageMarkDelivered(message))
   return QB
     .chat
-    .markMessageDelivered({ messageId, dialogId })
-    .then(() => dispatch(messageMarkDeliveredSuccess({ messageId, dialogId })))
+    .markMessageDelivered({ message })
+    .then(() => dispatch(messageMarkDeliveredSuccess()))
     .catch(e => dispatch(messageMarkDeliveredFail(e.message)))
-    .finally(() => {
-      markAsDeliveredQueue[messageId] = false
-    })
 }
 
-export const markAsRead = ({ messageId, dialogId }) => dispatch => {
-  if (markAsReadQueue[messageId]) {
+export const markAsRead = message => dispatch => {
+  if (markAsReadQueue[message.id]) {
     return
   } else {
-    markAsReadQueue[messageId] = true
+    markAsReadQueue[message.id] = true
   }
-  dispatch(messageMarkRead({ messageId, dialogId }))
+  dispatch(messageMarkRead(message))
   return QB
     .chat
-    .markMessageRead({ messageId, dialogId })
+    .markMessageRead({ message })
     .then(() => {
-      dispatch(messageMarkReadSuccess({ messageId, dialogId }))
-      dispatch(dialogUnreadCountDecrement({ dialogId }))
+      dispatch(messageMarkReadSuccess())
+      dispatch(dialogUnreadCountDecrement({ dialogId: message.dialogId }))
     })
     .catch(e => dispatch(messageMarkReadFail(e.message)))
     .finally(() => {
-      markAsReadQueue[messageId] = false
+      markAsReadQueue[message.id] = false
     })
 }
 
-export const getMessages = (request) => (dispatch, getState) => {
-  const { auth } = getState()
+export const getMessages = request => dispatch => {
   const query = {
     dialogId: request.dialogId,
     limit: request.limit || 30,
@@ -78,23 +69,10 @@ export const getMessages = (request) => (dispatch, getState) => {
   return QB
     .chat
     .getDialogMessages(query)
-    .then(result => {
-      dispatch(messagesGetSuccess({
-        messages: result.messages,
-        hasMore: result.messages.length === result.limit
-      }))
-      const notMarkedAsDelivered = result.messages.filter(({ deliveredIds }) =>
-        deliveredIds && deliveredIds.indexOf(auth.user.id) < 0
-      )
-      if (notMarkedAsDelivered.length) {
-        notMarkedAsDelivered.forEach(message =>
-          dispatch(markAsDelivered({
-            dialogId: message.dialogId,
-            messageId: message.id,
-          }))
-        )
-      }
-    })
+    .then(result => dispatch(messagesGetSuccess({
+      messages: result.messages,
+      hasMore: result.messages.length === result.limit
+    })))
     .catch(e => {
       showError('Failed to get messages', e.message)
       return dispatch(messagesGetFail(e.message))

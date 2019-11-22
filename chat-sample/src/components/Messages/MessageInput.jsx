@@ -8,12 +8,12 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native'
-import ImagePicker from 'react-native-image-picker'
 import QB from 'quickblox-react-native-sdk'
 
+import AttachButton from '../AttachButton'
 import { showError } from '../../NotificationService'
 import { colors } from '../../theme'
-import { ATTACHMENT, SEND } from '../../images'
+import { SEND } from '../../images'
 
 const styles = StyleSheet.create({
   inputView: {
@@ -34,15 +34,10 @@ const styles = StyleSheet.create({
     padding: 5,
     textAlignVertical: 'center',
   },
-  attachBtn: {
+  attachClearBtn: {
     alignItems: 'center',
     justifyContent: 'center',
     padding: 6,
-  },
-  attachBtnImage: {
-    height: 28,
-    resizeMode: 'center',
-    width: 30,
   },
   attachClearText: {
     color: colors.primary,
@@ -74,24 +69,31 @@ export default class MessageInput extends React.Component {
   typingTimeout = undefined
   TYPING_DEBOUNCE = 1000
 
-  selectFile = () => {
-    ImagePicker.showImagePicker(
-      { title: 'Select image or video to attach', mediaType: 'mixed' },
-      (response) => {
-        if (response.didCancel) {
-          return
+  fileSelected = response => {
+    if (response.didCancel) {
+      return
+    }
+    if (response.error) {
+      return showError('Error', response.error)
+    }
+    if (response.uri) {
+      let message
+      if (response.fileName) {
+        message = response.fileName
+      } else if (response.path) {
+        if (response.path.lastIndexOf('/') > -1) {
+          const afterLastSlash = response.path.substring(
+            response.path.lastIndexOf('/') + 1
+          )
+          message = afterLastSlash
+        } else {
+          message = response.uri
         }
-        if (response.error) {
-          return showError('Error', response.error)
-        }
-        if (response.uri) {
-          this.setState({
-            message: response.fileName || 'image',
-            fileUrl: response.uri
-          })
-        }
+      } else {
+        message = response.uri
       }
-    )
+      this.setState({ fileUrl: response.uri, message })
+    }
   }
 
   clearFile = () => this.setState({ fileUrl: '', message: '' })
@@ -133,17 +135,27 @@ export default class MessageInput extends React.Component {
         body: '',
       }
       if (file) {
-        const { uid: id, contentType: type } = file
-        payload.attachments = [{ id, type }]
+        const { uid: id, contentType } = file
+        let type = 'file'
+        if (contentType.indexOf('image') > -1) {
+          type = 'image'
+        }
+        if (contentType.indexOf('video') > -1) {
+          type = 'video'
+        }
+        payload.attachments = [{ id, type, contentType }]
         payload.body = '[attachment]'
       } else {
         if (message.trim().length) {
           payload.body = message
         }
       }
-      sendMessage(payload)
+      sendMessage(payload).then(action => {
+        if (!action || !action.error) {
+          this.setState({ message: '', fileUrl: '' })
+        }
+      })
     })
-    this.setState({ message: '', fileUrl: '' })
   }
 
   render() {
@@ -153,18 +165,15 @@ export default class MessageInput extends React.Component {
           <TouchableOpacity
             disabled={this.props.isSending}
             onPress={this.clearFile}
-            style={styles.attachBtn}
+            style={styles.attachClearBtn}
           >
             <Text style={styles.attachClearText}>&times;</Text>
           </TouchableOpacity>
         ) : (
-          <TouchableOpacity
+          <AttachButton
             disabled={this.props.isSending}
-            onPress={this.selectFile}
-            style={styles.attachBtn}
-          >
-            <Image source={ATTACHMENT} style={styles.attachBtnImage} />
-          </TouchableOpacity>
+            onAttachment={this.fileSelected}
+          />
         )}
         <TextInput
           editable={!this.props.isSending && !this.state.fileUrl}
@@ -176,7 +185,7 @@ export default class MessageInput extends React.Component {
           value={this.state.message}
         />
         <TouchableOpacity
-          disabled={this.props.isSending || !this.state.message}
+          disabled={this.props.isSending || !this.state.message.trim()}
           onPress={this.sendMessage}
           style={styles.sendBtn}
         >

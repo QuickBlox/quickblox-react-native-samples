@@ -2,6 +2,8 @@
 export const INIT_QB_REQUEST = 'INIT_QB_REQUEST'
 export const INIT_QB_REQUEST_SUCCESS = 'INIT_QB_REQUEST_SUCCESS'
 export const INIT_QB_REQUEST_FAIL = 'INIT_QB_REQUEST_FAIL'
+// Internet connection state
+export const CONNECTION_STATE_CHANGE = 'CONNECTION_STATE_CHANGE'
 // User authentication
 export const AUTH_LOGIN_REQUEST = 'AUTH_LOGIN_REQUEST'
 export const AUTH_LOGIN_SUCCESS = 'AUTH_LOGIN_SUCCESS'
@@ -101,3 +103,6 @@ export const FILE_PRIVATE_URL_FAIL = 'FILE_PRIVATE_URL_FAIL'
 export const GET_INFO_REQUEST = 'GET_INFO_REQUEST'
 export const GET_INFO_SUCCESS = 'GET_INFO_SUCCESS'
 export const GET_INFO_FAIL = 'GET_INFO_FAIL'
+// Device UDID for Push notifications
+export const DEVICE_UDID_SET = 'DEVICE_UDID_SET'
+export const DEVICE_UDID_REMOVE = 'DEVICE_UDID_REMOVE'

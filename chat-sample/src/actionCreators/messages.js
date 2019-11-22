@@ -28,36 +28,30 @@ export function messagesGetFail(error) {
   return { type: MESSAGES_GET_FAIL, error }
 }
 
-export function messageMarkDelivered({ messageId, dialogId }) {
+export function messageMarkDelivered(message) {
   return {
     type: MESSAGES_MARK_DELIVERED_REQUEST,
-    payload: { messageId, dialogId }
+    payload: { message }
   }
 }
 
-export function messageMarkDeliveredSuccess({ messageId, dialogId }) {
-  return {
-    type: MESSAGES_MARK_DELIVERED_SUCCESS,
-    payload: { messageId, dialogId }
-  }
+export function messageMarkDeliveredSuccess() {
+  return { type: MESSAGES_MARK_DELIVERED_SUCCESS }
 }
 
 export function messageMarkDeliveredFail(error) {
   return { type: MESSAGES_MARK_DELIVERED_FAIL, error }
 }
 
-export function messageMarkRead({ messageId, dialogId }) {
+export function messageMarkRead(message) {
   return {
     type: MESSAGES_MARK_READ_REQUEST,
-    payload: { messageId, dialogId }
+    payload: { message }
   }
 }
 
-export function messageMarkReadSuccess({ messageId, dialogId }) {
-  return {
-    type: MESSAGES_MARK_READ_SUCCESS,
-    payload: { messageId, dialogId }
-  }
+export function messageMarkReadSuccess() {
+  return { type: MESSAGES_MARK_READ_SUCCESS }
 }
 
 export function messageMarkReadFail(error) {

@@ -2,6 +2,7 @@ import React from 'react'
 import {
   Animated,
   Image,
+  Platform,
   StyleSheet,
   TouchableOpacity,
   View,
@@ -32,6 +33,9 @@ export default class RemoteImage extends React.PureComponent {
   state = { loaded: false }
 
   onLoad = () => {
+    if (Platform.OS === 'android' && this.refs.player) {
+      this.refs.player.seek(0)
+    }
     Animated
       .timing(this.placeholderOpacity, {
         toValue: 0,
@@ -59,6 +63,7 @@ export default class RemoteImage extends React.PureComponent {
   render() {
     const videoProps = this.state.loaded ? this.props : {
       ...this.props,
+      ref: 'player',
       style: { ...this.props.style, position: 'absolute', opacity: 0 },
       onLoad: this.onLoad
     }

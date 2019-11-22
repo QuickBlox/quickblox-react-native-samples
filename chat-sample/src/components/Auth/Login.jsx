@@ -116,9 +116,10 @@ export default class Login extends React.Component {
 
   connectAndRedirect = () => {
     const { connectAndSubscribe, navigation } = this.props
-    connectAndSubscribe()
-    setupPushNotifications()
-    navigation.navigate('Chat')
+    connectAndSubscribe().then(() => {
+      setupPushNotifications()
+      navigation.navigate('Chat')
+    })
   }
 
   renderForm = (formProps) => {

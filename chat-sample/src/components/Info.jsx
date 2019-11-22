@@ -10,6 +10,8 @@ import { SafeAreaView } from 'react-navigation'
 
 import { colors } from '../theme'
 import { LOGO } from '../images'
+import json from '../../package.json'
+import QBjson from 'quickblox-react-native-sdk/package.json'
 
 const styles = StyleSheet.create({
   safeArea: {
@@ -82,6 +84,14 @@ export default class Info extends React.Component {
           contentContainerStyle={styles.scrollViewContent}
           style={styles.scrollView}
         >
+          <View style={styles.formControlView}>
+            <Label>Chat Sample version</Label>
+            <Field value={json.version} />
+          </View>
+          <View style={styles.formControlView}>
+            <Label>React Native SDK version</Label>
+            <Field value={QBjson.version} />
+          </View>
           <View style={styles.formControlView}>
             <Label>QuickBlox SDK Version</Label>
             <Field value={sdkVersion} />

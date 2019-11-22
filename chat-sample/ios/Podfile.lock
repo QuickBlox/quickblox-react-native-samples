@@ -20,7 +20,7 @@ PODS:
     - glog
   - glog (0.3.5)
   - QuickBlox (2.17.4)
-  - quickblox-react-native-sdk (0.4.1-beta):
+  - quickblox-react-native-sdk (0.4.7-beta):
     - QuickBlox (~> 2.17.4)
     - Quickblox-WebRTC (~> 2.7.4)
     - React (>= 0.60.0)
@@ -191,6 +191,8 @@ PODS:
   - React-jsinspector (0.61.2)
   - react-native-image-picker (1.1.0):
     - React
+  - react-native-netinfo (4.6.0):
+    - React
   - react-native-video (5.0.2):
     - React
     - react-native-video/Video (= 5.0.2)
@@ -235,7 +237,7 @@ PODS:
     - React
   - RNCPushNotificationIOS (1.0.2):
     - React
-  - RNGestureHandler (1.4.1):
+  - RNGestureHandler (1.5.0):
     - React
   - RNReanimated (1.3.0):
     - React
@@ -262,6 +264,7 @@ DEPENDENCIES:
   - React-jsiexecutor (from `../node_modules/react-native/ReactCommon/jsiexecutor`)
   - React-jsinspector (from `../node_modules/react-native/ReactCommon/jsinspector`)
   - react-native-image-picker (from `../node_modules/react-native-image-picker`)
+  - "react-native-netinfo (from `../node_modules/@react-native-community/netinfo`)"
   - react-native-video (from `../node_modules/react-native-video`)
   - React-RCTActionSheet (from `../node_modules/react-native/Libraries/ActionSheetIOS`)
   - React-RCTAnimation (from `../node_modules/react-native/Libraries/NativeAnimation`)
@@ -320,6 +323,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon/jsinspector"
   react-native-image-picker:
     :path: "../node_modules/react-native-image-picker"
+  react-native-netinfo:
+    :path: "../node_modules/@react-native-community/netinfo"
   react-native-video:
     :path: "../node_modules/react-native-video"
   React-RCTActionSheet:
@@ -363,7 +368,7 @@ SPEC CHECKSUMS:
   Folly: 30e7936e1c45c08d884aa59369ed951a8e68cf51
   glog: 1f3da668190260b06b429bb211bfbee5cd790c28
   QuickBlox: 992be26bc127313991a1337dfd98c9359832c147
-  quickblox-react-native-sdk: 2c1da82f1188b9a74bbe15a8352f635d34b2964c
+  quickblox-react-native-sdk: 4b54d44de9480fac8fcc609dbbd1a0ceb8f145b7
   Quickblox-WebRTC: cd1a5159c2ddb5b0feaf00b7a38b5551743eb067
   RCTRequired: c639d59ed389cfb1f1203f65c2ea946d8ec586e2
   RCTTypeSafety: dc23fb655d6c77667c78e327bf661bc11e3b8aec
@@ -375,6 +380,7 @@ SPEC CHECKSUMS:
   React-jsiexecutor: 8909917ff7d8f21a57e443a866fd8d4560e50c65
   React-jsinspector: 111d7d342b07a904c400592e02a2b958f1098b60
   react-native-image-picker: 3637d63fef7e32a230141ab4660d3ceb773c824f
+  react-native-netinfo: bd4c115afdf0821b8ddb6c59ef3ddc5f0a7e8ad0
   react-native-video: 961749da457e73bf0b5565edfbaffc25abfb8974
   React-RCTActionSheet: 89b037c0fb7d2671607cb645760164e7e0c013f6
   React-RCTAnimation: e3cefa93c38c004c318f7ec04b883eb14b8b8235
@@ -388,7 +394,7 @@ SPEC CHECKSUMS:
   ReactCommon: 5848032ed2f274fcb40f6b9ec24067787c42d479
   RNCAsyncStorage: 5ae4d57458804e99f73d427214442a6b10a53856
   RNCPushNotificationIOS: 7bcc4071d6f25c4d441cbef42a097462f4e30208
-  RNGestureHandler: 4cb47a93019c1a201df2644413a0a1569a51c8aa
+  RNGestureHandler: a4ddde1ffc6e590c8127b8b7eabfdade45475c74
   RNReanimated: 6abbbae2e5e72609d85aabd92a982a94566885f1
   RNScreens: 402a99b0a27c0c32f079cec12d3ccbd35e20cd7f
   Yoga: 14927e37bd25376d216b150ab2a561773d57911f

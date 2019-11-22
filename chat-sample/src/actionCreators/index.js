@@ -1,6 +1,7 @@
 export * from './app'
 export * from './auth'
 export * from './chat'
+export * from './device'
 export * from './dialogs'
 export * from './file'
 export * from './info'
