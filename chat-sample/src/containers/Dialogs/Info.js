@@ -1,22 +1,23 @@
 import { connect } from 'react-redux'
 
 import DialogInfo from '../../components/Dialogs/Info'
-import { getUsers } from '../../thunks'
+import { usersGet } from '../../actionCreators'
 
-const mapStateToProps = ({ dialogs, users: { users } }, { navigation }) => {
+const mapStateToProps = ({ dialogs, users }, { navigation }) => {
   const dialogParam = navigation.getParam('dialog')
   const dialog = dialogs.dialogs.find(dialog => dialog.id === dialogParam.id)
   const data = dialog
     .occupantsIds
-    .map(userId => users.find(user => user.id === userId))
+    .map(userId => users.users.find(user => user.id === userId))
     .filter(user => user)
   return {
     data,
     dialog,
-    users,
+    loading: users.loading,
+    users: users.users,
   }
 }
 
-const mapDispatchToProps = { getUsers }
+const mapDispatchToProps = { getUsers: usersGet }
 
 export default connect(mapStateToProps, mapDispatchToProps)(DialogInfo)

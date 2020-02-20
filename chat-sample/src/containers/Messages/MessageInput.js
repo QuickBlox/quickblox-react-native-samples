@@ -1,13 +1,27 @@
 import { connect } from 'react-redux'
 
 import MessageInput from '../../components/Messages/MessageInput'
-import { sendMessage, uploadFile } from '../../thunks'
+import {
+  dialogStartTyping,
+  dialogStopTyping,
+  fileUpload,
+  fileUploadCancel,
+  messageSend,
+} from '../../actionCreators'
 
-const mapStateToProps = ({ messages }, { dialogId }) => ({
-  isSending: messages.sending,
+const mapStateToProps = ({ content, messages }, { dialogId }) => ({
   dialogId,
+  isSending: messages.sending,
+  uploading: content.uploading,
+  uploadProgress: content.uploadProgress,
 })
 
-const mapDispatchToProps = { sendMessage, uploadFile }
+const mapDispatchToProps = {
+  cancelUpload: fileUploadCancel,
+  sendIsTyping: dialogStartTyping,
+  sendMessage: messageSend,
+  sendStoppedTyping: dialogStopTyping,
+  uploadFile: fileUpload,
+}
 
 export default connect(mapStateToProps, mapDispatchToProps)(MessageInput)

@@ -7,8 +7,8 @@ export default StyleSheet.create({
     padding: 6,
   },
   attachButtonImage: {
-    height: 28,
-    resizeMode: 'center',
+    height: 30,
+    resizeMode: 'contain',
     width: 30,
   },
 })

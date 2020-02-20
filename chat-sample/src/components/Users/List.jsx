@@ -28,7 +28,7 @@ const styles = StyleSheet.create({
 export default class UsersList extends React.PureComponent {
 
   componentDidMount() {
-    this.props.getUsers()
+    this.props.getUsers({ page: 1, perPage: 30 })
   }
 
   loadNextPage = () => {

@@ -156,21 +156,19 @@ export default class MessagesList extends React.PureComponent {
   )
 
   viewableItemsChanged = ({ viewableItems }) => {
-    const { currentUser, markAsRead, unreadMessagesCount } = this.props
-    if (unreadMessagesCount) {
-      viewableItems
-        .filter(item => item.index !== null)
-        .forEach(({ isViewable, item: message }) => {
-          const { readIds = [] } = message
-          const shouldMarkAsRead = (
-            isViewable &&
-            readIds.indexOf(currentUser.id) === -1
-          )
-          if (shouldMarkAsRead) {
-            markAsRead(message)
-          }
-        })
-    }
+    const { currentUser, markAsRead } = this.props
+    viewableItems
+      .filter(item => item.index !== null)
+      .forEach(({ isViewable, item: message }) => {
+        const { readIds = [] } = message
+        const shouldMarkAsRead = (
+          isViewable &&
+          readIds.indexOf(currentUser.id) === -1
+        )
+        if (shouldMarkAsRead) {
+          markAsRead(message)
+        }
+      })
   }
 
   render() {

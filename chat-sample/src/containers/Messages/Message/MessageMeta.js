@@ -1,7 +1,7 @@
 import { connect } from 'react-redux'
 
 import MessageMeta from '../../../components/Messages/Message/MessageMeta'
-import { getUsers } from '../../../thunks'
+import { usersGet } from '../../../actionCreators'
 
 const mapStateToProps = ({ auth, users }, { message = {} }) => {
   const sender = users.users.find(user => user.id === message.senderId)
@@ -29,6 +29,6 @@ const mapStateToProps = ({ auth, users }, { message = {} }) => {
   }
 }
 
-const mapDispatchToProps = { getUsers }
+const mapDispatchToProps = { getUsers: usersGet }
 
 export default connect(mapStateToProps, mapDispatchToProps)(MessageMeta)

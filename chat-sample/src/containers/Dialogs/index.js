@@ -1,22 +1,21 @@
 import { connect } from 'react-redux'
 
 import DialogsScreen from '../../components/Dialogs'
-import { dialogSelectReset } from '../../actionCreators'
 import {
-  chatDisconnectThunk,
-  deleteDialog,
-  logout,
-} from '../../thunks'
+  dialogLeave,
+  dialogSelectReset,
+  logoutRequest,
+} from '../../actionCreators'
 
 const mapStateToProps = ({ auth, dialogs }) => ({
+  loading: dialogs.loading,
   selected: dialogs.selected,
-  userName: auth.user && auth.user.fullName,
+  user: auth.user,
 })
 
 const mapDispatchToProps = {
-  deleteDialog,
-  disconnectFromChat: chatDisconnectThunk,
-  logout,
+  leaveDialog: dialogLeave,
+  logout: logoutRequest,
   resetSelection: dialogSelectReset,
 }
 

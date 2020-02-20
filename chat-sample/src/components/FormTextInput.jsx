@@ -27,46 +27,19 @@ if (Platform.OS === 'android' &&
 
 export default class FormTextInput extends React.Component {
 
-  state = { hint: '', showHint: false }
-
-  showHint = (hint = '') => {
-    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut)
-    this.setState({ hint, showHint: true })
-  }
-
-  hideHint = () => {
-    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut)
-    this.setState({ hint: '', showHint: false })
-  }
-
-  shouldComponentUpdate(nextProps, nextState) {
-    const {
-      input: { value },
-      meta: { active, error }
-    } = this.props
-    const { showHint } = this.state
-    if (value !== nextProps.input.value ||
-       active !== nextProps.meta.active ||
-       error !== nextProps.meta.error ||
-       showHint !== nextState.showHint) {
-      if (error !== nextProps.meta.error) { // should show or hide hint
-        if (!error && nextProps.meta.error && nextProps.meta.active) {
-          this.showHint(nextProps.meta.error)
-        }
-        if (error && !nextProps.meta.error && nextProps.meta.active) {
-          this.hideHint()
-        }
-      }
-      if (active && !nextProps.meta.active) {
-        this.hideHint()
-      }
-      if (!active && nextProps.meta.active && nextProps.meta.error) {
-        this.showHint(nextProps.meta.error)
-      }
-      return true
-    } else {
-      return false
+  shouldComponentUpdate(nextProps) {
+    const { input, meta } = this.props
+    if (meta.touched !== nextProps.meta.touched ||
+        meta.active !== nextProps.meta.active ||
+        meta.error !== nextProps.meta.error) {
+      LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut)
     }
+    return (
+      input.value !== nextProps.input.value ||
+      meta.touched !== nextProps.meta.touched ||
+      meta.active !== nextProps.meta.active ||
+      meta.error !== nextProps.meta.error
+    )
   }
 
   render() {
@@ -83,8 +56,8 @@ export default class FormTextInput extends React.Component {
           value={input.value}
           style={meta.active && activeStyle ? activeStyle : style}
         />
-        {this.state.showHint ? (
-          <Text style={styles.hint}>{this.state.hint}</Text>
+        {(meta.touched || meta.active) && meta.error ? (
+          <Text style={styles.hint}>{meta.error}</Text>
         ) : null}
       </React.Fragment>
     )

@@ -1,24 +1,24 @@
 import { connect } from 'react-redux'
 
 import Message from '../../../components/Messages/Message'
-import { getPrivateUrl } from '../../../thunks'
+import { privateUrlGet } from '../../../actionCreators'
 
-const getAttachmentUrl = (imagesMap, message) => {
+const getAttachmentUrl = (filesMap, message) => {
   const { attachments } = message
   if (Array.isArray(attachments) && attachments.length) {
     const [attachment] = attachments
-    return imagesMap[attachment.id]
+    return filesMap[attachment.id]
   }
   return undefined
 }
 
-const mapStateToProps = ({ auth, images }, { message = {} }) => {
+const mapStateToProps = ({ auth, content }, { message = {} }) => {
   return {
     currentUser: auth.user,
-    imageUrl: getAttachmentUrl(images, message),
+    imageUrl: getAttachmentUrl(content, message),
   }
 }
 
-const mapDispatchToProps = { getPrivateUrl }
+const mapDispatchToProps = { getPrivateUrl: privateUrlGet }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Message)

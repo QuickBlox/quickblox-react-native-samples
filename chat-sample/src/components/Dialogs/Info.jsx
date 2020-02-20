@@ -29,6 +29,8 @@ const localStyles = StyleSheet.create({
 
 export default class DialogInfo extends React.PureComponent {
 
+  focusListener
+
   static navigationOptions = ({ navigation }) => {
     const dialog = navigation.getParam('dialog', { occupantsIds: [] })
     return {
@@ -54,6 +56,23 @@ export default class DialogInfo extends React.PureComponent {
   }
 
   componentDidMount() {
+    const { dialog, navigation } = this.props
+    const navDialog = navigation.getParam('dialog', { occupantsIds: [] })
+    if (navDialog.occupantsIds.length !== dialog.occupantsIds.length) {
+      navigation.setParams({ dialog })
+    }
+    this.loadMissingUsers()
+    this.focusListener = this.props.navigation.addListener(
+      'didFocus',
+      this.loadMissingUsers
+    )
+  }
+
+  componentWillUnmount() {
+    this.focusListener && this.focusListener.remove()
+  }
+
+  loadMissingUsers = () => {
     const { dialog, getUsers, users } = this.props
     const loadUsers = []
     dialog.occupantsIds.forEach(userId => {
@@ -65,6 +84,8 @@ export default class DialogInfo extends React.PureComponent {
     if (loadUsers.length) {
       getUsers({
         append: true,
+        page: 1,
+        perPage: loadUsers.length,
         filter: {
           field: QB.users.USERS_FILTER.FIELD.ID,
           type: QB.users.USERS_FILTER.TYPE.NUMBER,
@@ -78,7 +99,7 @@ export default class DialogInfo extends React.PureComponent {
   renderUser = ({ item }) => <User user={item} />
 
   render() {
-    const { data } = this.props
+    const { data, loading } = this.props
     return (
       <SafeAreaView style={styles.safeArea}>
         <FlatList
@@ -86,6 +107,7 @@ export default class DialogInfo extends React.PureComponent {
           keyExtractor={({ id }) => `${id}`}
           renderItem={this.renderUser}
           style={localStyles.list}
+          refreshing={loading}
         />
       </SafeAreaView>
     )

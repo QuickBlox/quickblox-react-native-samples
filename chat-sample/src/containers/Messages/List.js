@@ -1,7 +1,7 @@
 import { connect } from 'react-redux'
 
 import MessagesList from '../../components/Messages/List'
-import { getMessages, markAsRead } from '../../thunks'
+import { messageMarkRead, messagesGet } from '../../actionCreators'
 
 const mapMessagesToSections = (messages = []) => messages
   .sort((a, b) => +b.dateSent - +a.dateSent)
@@ -25,19 +25,21 @@ const mapMessagesToSections = (messages = []) => messages
 
 const mapStateToProps = ({ auth, dialogs, messages }, { dialogId }) => {
   const dialog = dialogs.dialogs.find(d => d.id === dialogId) || {}
-  const { type, unreadMessagesCount = 0 } = dialog
+  const { type } = dialog
   const { loading, messages: data } = messages
   const messagesData = data[dialogId]
   return {
     currentUser: auth.user,
+    dialogType: type,
     hasMore: messagesData ? messagesData.hasMore : false,
     loading,
-    dialogType: type,
     sections: mapMessagesToSections(messagesData),
-    unreadMessagesCount,
   }
 }
 
-const mapDispatchToProps = { getMessages, markAsRead }
+const mapDispatchToProps = {
+  getMessages: messagesGet,
+  markAsRead: messageMarkRead,
+}
 
 export default connect(mapStateToProps, mapDispatchToProps)(MessagesList)

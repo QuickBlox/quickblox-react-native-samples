@@ -1,7 +1,7 @@
 import { connect } from 'react-redux'
 
 import DialogsCreate2 from '../../components/Dialogs/Create2'
-import { createDialog, sendMessage } from '../../thunks'
+import { dialogCreate, messageSend } from '../../actionCreators'
 
 const mapStateToProps = ({ auth, users }) => ({
   currentUser: auth.user,
@@ -10,8 +10,8 @@ const mapStateToProps = ({ auth, users }) => ({
 })
 
 const mapDispatchToProps = {
-  createDialog,
-  sendMessage,
+  createDialog: dialogCreate,
+  sendMessage: messageSend,
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(DialogsCreate2)

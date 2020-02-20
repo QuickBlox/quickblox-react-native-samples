@@ -164,15 +164,19 @@ export default (state = initialState, action) => {
       const index = dialogs.findIndex(dialog =>
         dialog.id === action.payload.dialogId
       )
-      if (index > -1) {
-        const dialog = dialogs[index]
-        if (!dialog.typing) {
-          dialogs[index] = { ...dialog, typing: [action.payload.userId] }
-        } else {
-          dialogs[index] = {
-            ...dialog,
-            typing: dialog.typing.concat(action.payload.userId)
-          }
+      if (index === -1) {
+        return state
+      }
+      const dialog = dialogs[index]
+      if (!dialog.typing) {
+        dialogs[index] = { ...dialog, typing: [action.payload.userId] }
+      } else {
+        const { userId } = action.payload
+        dialogs[index] = {
+          ...dialog,
+          typing: dialog.typing.indexOf(userId) > -1 ?
+            dialog.typing :
+            dialog.typing.concat(action.payload.userId)
         }
       }
       return { ...state, dialogs }

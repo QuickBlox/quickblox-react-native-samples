@@ -1,8 +1,10 @@
 import { connect } from 'react-redux'
 
 import UsersFilter from '../../components/Users/Filter'
-import { usersSetFilter } from '../../actionCreators'
-import { getUsers } from '../../thunks'
+import {
+  usersGet,
+  usersSetFilter,
+} from '../../actionCreators'
 
 const mapStateToProps = ({ users }) => ({
   filter: users.filter,
@@ -10,7 +12,7 @@ const mapStateToProps = ({ users }) => ({
 })
 
 const mapDispatchToProps = {
-  getUsers,
+  getUsers: usersGet,
   setFilter: usersSetFilter,
 }
 

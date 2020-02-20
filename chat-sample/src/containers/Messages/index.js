@@ -1,12 +1,16 @@
 import { connect } from 'react-redux'
 
 import Messages from '../../components/Messages'
-import { leaveDialog, sendMessage } from '../../thunks'
+import { dialogLeave } from '../../actionCreators'
 
-const mapStateToProps = ({ auth }) => ({
-  currentUser: auth.user || {}
-})
+const mapStateToProps = ({ dialogs: { dialogs = [] } }, { navigation }) => {
+  const navParamDialog = navigation.getParam('dialog')
+  const dialog = navParamDialog ?
+    dialogs.find(d => d.id === navParamDialog.id) :
+    undefined
+  return { dialog }
+}
 
-const mapDispatchToProps = { leaveDialog, sendMessage }
+const mapDispatchToProps = { leaveDialog: dialogLeave }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Messages)

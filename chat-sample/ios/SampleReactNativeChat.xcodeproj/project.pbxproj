@@ -11,7 +11,7 @@
 		13B07FBD1A68108700A75B9A /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB11A68108700A75B9A /* LaunchScreen.xib */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		4532971822BCB7D400405ABC /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4532971722BCB7D400405ABC /* Assets.xcassets */; };
-		AA1BB60EE557285C784E3B98 /* libPods-SampleReactNativeChat.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FA7A7DFACF23F995D974673B /* libPods-SampleReactNativeChat.a */; };
+		E74B843686D5947183054051 /* libPods-SampleReactNativeChat.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F855420953712248172931A5 /* libPods-SampleReactNativeChat.a */; };
 		ED297163215061F000B7C4FE /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ED297162215061F000B7C4FE /* JavaScriptCore.framework */; };
 /* End PBXBuildFile section */
 
@@ -22,14 +22,14 @@
 		13B07FB21A68108700A75B9A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = SampleReactNativeChat/Info.plist; sourceTree = "<group>"; };
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = SampleReactNativeChat/main.m; sourceTree = "<group>"; };
-		2218B9EB802C55D588E75B04 /* Pods-SampleReactNativeChat.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SampleReactNativeChat.debug.xcconfig"; path = "Target Support Files/Pods-SampleReactNativeChat/Pods-SampleReactNativeChat.debug.xcconfig"; sourceTree = "<group>"; };
+		2AC8449D5FF5769F45E0681F /* Pods-SampleReactNativeChat.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SampleReactNativeChat.release.xcconfig"; path = "Target Support Files/Pods-SampleReactNativeChat/Pods-SampleReactNativeChat.release.xcconfig"; sourceTree = "<group>"; };
 		2D16E6891FA4F8E400B85C8A /* libReact.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libReact.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		4532971722BCB7D400405ABC /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		B5A68398B9CAAC499016CDBB /* Pods-SampleReactNativeChat.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SampleReactNativeChat.release.xcconfig"; path = "Target Support Files/Pods-SampleReactNativeChat/Pods-SampleReactNativeChat.release.xcconfig"; sourceTree = "<group>"; };
+		9FF239A30685F5D4E4C0C0DF /* Pods-SampleReactNativeChat.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SampleReactNativeChat.debug.xcconfig"; path = "Target Support Files/Pods-SampleReactNativeChat/Pods-SampleReactNativeChat.debug.xcconfig"; sourceTree = "<group>"; };
 		CEC785C522E70C9F002EA50A /* SampleReactNativeChat.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = SampleReactNativeChat.entitlements; path = SampleReactNativeChat/SampleReactNativeChat.entitlements; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		ED2971642150620600B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.0.sdk/System/Library/Frameworks/JavaScriptCore.framework; sourceTree = DEVELOPER_DIR; };
-		FA7A7DFACF23F995D974673B /* libPods-SampleReactNativeChat.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-SampleReactNativeChat.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		F855420953712248172931A5 /* libPods-SampleReactNativeChat.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-SampleReactNativeChat.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -38,7 +38,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				ED297163215061F000B7C4FE /* JavaScriptCore.framework in Frameworks */,
-				AA1BB60EE557285C784E3B98 /* libPods-SampleReactNativeChat.a in Frameworks */,
+				E74B843686D5947183054051 /* libPods-SampleReactNativeChat.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -65,7 +65,7 @@
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
 				ED2971642150620600B7C4FE /* JavaScriptCore.framework */,
 				2D16E6891FA4F8E400B85C8A /* libReact.a */,
-				FA7A7DFACF23F995D974673B /* libPods-SampleReactNativeChat.a */,
+				F855420953712248172931A5 /* libPods-SampleReactNativeChat.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -102,8 +102,8 @@
 		EA660FAF469D3A80E3363CAE /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				2218B9EB802C55D588E75B04 /* Pods-SampleReactNativeChat.debug.xcconfig */,
-				B5A68398B9CAAC499016CDBB /* Pods-SampleReactNativeChat.release.xcconfig */,
+				9FF239A30685F5D4E4C0C0DF /* Pods-SampleReactNativeChat.debug.xcconfig */,
+				2AC8449D5FF5769F45E0681F /* Pods-SampleReactNativeChat.release.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
@@ -115,12 +115,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "SampleReactNativeChat" */;
 			buildPhases = (
-				E7D4466751A9DAB624050DB9 /* [CP] Check Pods Manifest.lock */,
+				25CA35DB0071B85A41D5C0E0 /* [CP] Check Pods Manifest.lock */,
 				13B07F871A680F5B00A75B9A /* Sources */,
 				13B07F8C1A680F5B00A75B9A /* Frameworks */,
 				13B07F8E1A680F5B00A75B9A /* Resources */,
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
-				0A1341544B18D01DBB205C85 /* [CP] Embed Pods Frameworks */,
+				43385CBFB37C5B2DF9AFF9AF /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -200,27 +200,7 @@
 			shellPath = /bin/sh;
 			shellScript = "export NODE_BINARY=node\n../node_modules/react-native/scripts/react-native-xcode.sh\n";
 		};
-		0A1341544B18D01DBB205C85 /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-SampleReactNativeChat/Pods-SampleReactNativeChat-frameworks.sh",
-				"${PODS_ROOT}/QuickBlox/Quickblox.framework",
-				"${PODS_ROOT}/Quickblox-WebRTC/QuickbloxWebRTC.framework",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputPaths = (
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Quickblox.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/QuickbloxWebRTC.framework",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-SampleReactNativeChat/Pods-SampleReactNativeChat-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		E7D4466751A9DAB624050DB9 /* [CP] Check Pods Manifest.lock */ = {
+		25CA35DB0071B85A41D5C0E0 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -240,6 +220,26 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		43385CBFB37C5B2DF9AFF9AF /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-SampleReactNativeChat/Pods-SampleReactNativeChat-frameworks.sh",
+				"${PODS_ROOT}/QuickBlox/Quickblox.framework",
+				"${PODS_ROOT}/Quickblox-WebRTC/QuickbloxWebRTC.framework",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Quickblox.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/QuickbloxWebRTC.framework",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-SampleReactNativeChat/Pods-SampleReactNativeChat-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
@@ -271,7 +271,7 @@
 /* Begin XCBuildConfiguration section */
 		13B07F941A680F5B00A75B9A /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 2218B9EB802C55D588E75B04 /* Pods-SampleReactNativeChat.debug.xcconfig */;
+			baseConfigurationReference = 9FF239A30685F5D4E4C0C0DF /* Pods-SampleReactNativeChat.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = SampleReactNativeChat/SampleReactNativeChat.entitlements;
@@ -299,7 +299,7 @@
 		};
 		13B07F951A680F5B00A75B9A /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = B5A68398B9CAAC499016CDBB /* Pods-SampleReactNativeChat.release.xcconfig */;
+			baseConfigurationReference = 2AC8449D5FF5769F45E0681F /* Pods-SampleReactNativeChat.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = SampleReactNativeChat/SampleReactNativeChat.entitlements;

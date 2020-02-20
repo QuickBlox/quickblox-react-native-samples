@@ -1,33 +1,30 @@
 import React from 'react'
-import { Text, TouchableOpacity, View } from 'react-native'
+import { ActivityIndicator, Text, TouchableOpacity, View  } from 'react-native'
 import { SafeAreaView } from 'react-navigation'
+import { HeaderBackButton } from 'react-navigation-stack'
 
 import HeaderButton from '../HeaderButton'
 import DialogsList from '../../containers/Dialogs/List'
-import { removePushSubscription } from '../../NotificationService'
-import { chatUnsubscribe } from '../../thunks'
+import { removePushSubscription, showError } from '../../NotificationService'
 import { ADD, INFO, EXIT } from '../../images'
 import styles from './styles'
+import { colors } from '../../theme'
 
 class Dialogs extends React.Component {
 
   state = { deleteMode: false }
 
   static navigationOptions = ({ navigation }) => {
-    const deleteMode = navigation.getParam('deleteMode', false)
     const cancelDelete = navigation.getParam('cancelDelete')
     const deleteDialogs = navigation.getParam('deleteDialogs')
-    const selected = navigation.getParam('selected', [])
+    const deleteMode = navigation.getParam('deleteMode', false)
     const handleLogout = navigation.getParam('handleLogout')
+    const loading = navigation.getParam('loading', false)
+    const selected = navigation.getParam('selected', [])
     const userName = navigation.getParam('userName')
     return deleteMode ? {
       headerLeft: (
-        <TouchableOpacity
-          onPress={cancelDelete}
-          style={styles.headerButton}
-        >
-          <Text style={styles.headerButtonText}>Cancel</Text>
-        </TouchableOpacity>
+        <HeaderBackButton onPress={cancelDelete} tintColor="#fff" />
       ),
       headerTitle: (
         <View style={styles.titleView}>
@@ -37,7 +34,9 @@ class Dialogs extends React.Component {
           </Text>
         </View>
       ),
-      headerRight: (
+      headerRight: loading ? (
+        <ActivityIndicator color={colors.white} style={{ padding: 8 }} />
+      ) : (
         <TouchableOpacity
           onPress={deleteDialogs}
           style={styles.headerButton}
@@ -73,23 +72,41 @@ class Dialogs extends React.Component {
   }
 
   componentDidMount() {
+    const { loading, user } = this.props
+    const userName = user ?
+     (user.fullName || user.login || user.email) :
+     ''
     this.props.navigation.setParams({
       cancelDelete: this.turnDeleteModeOff,
       deleteDialogs: this.deleteDialogs,
       deleteMode: this.state.deleteMode,
       handleLogout: this.logout,
+      loading,
       selected: this.props.selected,
-      userName: this.props.userName,
+      userName,
     })
   }
 
   shouldComponentUpdate(nextProps, nextState) {
-    const { navigation, selected } = this.props
+    const { loading, navigation, selected, user } = this.props
     const { deleteMode } = this.state
     if (selected.length !== nextProps.selected.length) {
       navigation.setParams({ selected: nextProps.selected })
     }
-    return deleteMode !== nextState.deleteMode
+    if (loading !== nextProps.loading) {
+      navigation.setParams({ loading: nextProps.loading })
+    }
+    if (user !== nextProps.user) {
+      if (user && !nextProps.user) {
+        navigation.navigate('CheckAuth')
+        return false
+      }
+    }
+    return (
+      deleteMode !== nextState.deleteMode ||
+      loading !== nextProps.loading ||
+      user !== nextProps.user
+    )
   }
 
   turnDeleteModeOn = () => {
@@ -108,21 +125,17 @@ class Dialogs extends React.Component {
   }
 
   deleteDialogs = () => {
-    const { deleteDialog, selected = [] } = this.props
-    selected.forEach(dialogId => deleteDialog(dialogId))
-    this.turnDeleteModeOff()
+    const { leaveDialog, selected = [] } = this.props
+    Promise
+      .all(selected.map(dialogId => new Promise((resolve, reject) =>
+        leaveDialog({ dialogId, resolve, reject })
+      )))
+      .then(this.turnDeleteModeOff)
+      .catch(action => showError('Failed to leave dialog', action.error))
   }
 
   logout = () => {
-    chatUnsubscribe()
-    removePushSubscription()
-      .then(() => this.props.logout())
-      .then(() => this.props.disconnectFromChat())
-      .then(result => {
-        if (!result || !result.error) {
-          this.props.navigation.navigate('CheckAuth')
-        }
-      })
+    removePushSubscription().then(this.props.logout)
   }
 
   goToDialog = dialog => this.props.navigation.navigate({
@@ -133,7 +146,10 @@ class Dialogs extends React.Component {
 
   render() {
     return (
-      <SafeAreaView forceInset={{ top: 'never' }} style={styles.safeArea}>
+      <SafeAreaView
+        forceInset={{ top: 'never', bottom: 'always' }}
+        style={styles.safeArea}
+      >
         <DialogsList
           onLongPress={this.turnDeleteModeOn}
           onPress={this.state.deleteMode ? undefined : this.goToDialog}

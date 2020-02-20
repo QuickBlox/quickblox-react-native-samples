@@ -1,8 +1,10 @@
 import { connect } from 'react-redux'
 
 import UsersList from '../../components/Users/List'
-import { usersSelect } from '../../actionCreators'
-import { getUsers } from '../../thunks'
+import {
+  usersGet,
+  usersSelect,
+} from '../../actionCreators'
 
 const mapStateToProps = ({ auth, users }, { exclude = [] }) => ({
   data: users
@@ -18,7 +20,7 @@ const mapStateToProps = ({ auth, users }, { exclude = [] }) => ({
 })
 
 const mapDispatchToProps = {
-  getUsers,
+  getUsers: usersGet,
   selectUser: usersSelect,
 }
 

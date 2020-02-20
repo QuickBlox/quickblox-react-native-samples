@@ -3,9 +3,6 @@ import {
   DIALOGS_CREATE_FAIL,
   DIALOGS_CREATE_REQUEST,
   DIALOGS_CREATE_SUCCESS,
-  DIALOGS_DELETE_FAIL,
-  DIALOGS_DELETE_REQUEST,
-  DIALOGS_DELETE_SUCCESS,
   DIALOGS_EDIT_CANCEL,
   DIALOGS_EDIT_FAIL,
   DIALOGS_EDIT_REQUEST,
@@ -22,6 +19,12 @@ import {
   DIALOGS_SELECT_RESET,
   DIALOGS_SELECT,
   DIALOGS_SET_FILTER,
+  DIALOGS_START_TYPING_FAIL,
+  DIALOGS_START_TYPING_REQUEST,
+  DIALOGS_START_TYPING_SUCCESS,
+  DIALOGS_STOP_TYPING_FAIL,
+  DIALOGS_STOP_TYPING_REQUEST,
+  DIALOGS_STOP_TYPING_SUCCESS,
   DIALOGS_UNREAD_COUNT_DECREMENT,
   DIALOGS_UNREAD_COUNT_INCREMENT,
 } from '../constants'
@@ -66,15 +69,8 @@ export function dialogCreateCancel() {
   return { type: DIALOGS_CREATE_CANCEL }
 }
 
-export function dialogEdit({ dialogId, addUsers, removeUsers, name }) {
-  return {
-    type: DIALOGS_EDIT_REQUEST, payload: {
-      dialogId,
-      addUsers,
-      removeUsers,
-      name,
-    }
-  }
+export function dialogEdit(payload) {
+  return { type: DIALOGS_EDIT_REQUEST, payload }
 }
 
 export function dialogEditSuccess(dialog) {
@@ -89,8 +85,8 @@ export function dialogEditCancel() {
   return { type: DIALOGS_EDIT_CANCEL }
 }
 
-export function dialogJoin(dialogId) {
-  return { type: DIALOGS_JOIN_REQUEST, payload: dialogId }
+export function dialogJoin(payload) {
+  return { type: DIALOGS_JOIN_REQUEST, payload }
 }
 
 export function dialogJoinSuccess(payload) {
@@ -101,8 +97,8 @@ export function dialogJoinFail(error) {
   return { type: DIALOGS_JOIN_FAIL, error }
 }
 
-export function dialogLeave(dialogId) {
-  return { type: DIALOGS_LEAVE_REQUEST, payload: dialogId }
+export function dialogLeave(payload) {
+  return { type: DIALOGS_LEAVE_REQUEST, payload }
 }
 
 export function dialogLeaveSuccess(dialogId) {
@@ -113,22 +109,34 @@ export function dialogLeaveFail(error) {
   return { type: DIALOGS_LEAVE_FAIL, error }
 }
 
-export function dialogDelete(dialogId) {
-  return { type: DIALOGS_DELETE_REQUEST, payload: dialogId }
-}
-
-export function dialogDeleteSuccess(dialogId) {
-  return { type: DIALOGS_DELETE_SUCCESS, payload: dialogId }
-}
-
-export function dialogDeleteFail(error) {
-  return { type: DIALOGS_DELETE_FAIL, error }
-}
-
 export function dialogSelect(dialogId) {
   return { type: DIALOGS_SELECT, payload: dialogId }
 }
 
 export function dialogSelectReset() {
   return { type: DIALOGS_SELECT_RESET }
+}
+
+export function dialogStartTyping(dialogId) {
+  return { type: DIALOGS_START_TYPING_REQUEST, payload: dialogId }
+}
+
+export function dialogStartTypingSuccess() {
+  return { type: DIALOGS_START_TYPING_SUCCESS }
+}
+
+export function dialogStartTypingFail(error) {
+  return { type: DIALOGS_START_TYPING_FAIL, error }
+}
+
+export function dialogStopTyping(dialogId) {
+  return { type: DIALOGS_STOP_TYPING_REQUEST, payload: dialogId }
+}
+
+export function dialogStopTypingSuccess() {
+  return { type: DIALOGS_STOP_TYPING_SUCCESS }
+}
+
+export function dialogStopTypingFail(error) {
+  return { type: DIALOGS_STOP_TYPING_FAIL, error }
 }

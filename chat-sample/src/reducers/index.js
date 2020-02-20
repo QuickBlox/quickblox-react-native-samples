@@ -5,7 +5,7 @@ import auth from './auth'
 import chat from './chat'
 import device from './device'
 import dialogs from './dialogs'
-import images from './images'
+import content from './content'
 import info from './info'
 import messages from './messages'
 import users from './users'
@@ -16,7 +16,7 @@ export default combineReducers({
   chat,
   device,
   dialogs,
-  images,
+  content,
   info,
   messages,
   users,

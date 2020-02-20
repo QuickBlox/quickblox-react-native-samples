@@ -2,6 +2,7 @@ import QB from 'quickblox-react-native-sdk'
 
 import {
   AUTH_LOGOUT_SUCCESS,
+  DIALOGS_LEAVE_SUCCESS,
   MESSAGES_GET_FAIL,
   MESSAGES_GET_REQUEST,
   MESSAGES_GET_SUCCESS,
@@ -48,14 +49,16 @@ export default (state = initialState, action) => {
     }
     case MESSAGES_GET_FAIL:
       return { ...state, error: action.error, loading: false }
+    case DIALOGS_LEAVE_SUCCESS: {
+      const messages = { ...state.messages }
+      messages[action.payload] = []
+      return { ...state, messages }
+    }
     case MESSAGES_SEND_REQUEST:
-    case FILE_UPLOAD_REQUEST:
       return { ...state, error: undefined, sending: true }
     case MESSAGES_SEND_SUCCESS:
-    case FILE_UPLOAD_SUCCESS:
       return { ...state, sending: false }
     case MESSAGES_SEND_FAIL:
-    case FILE_UPLOAD_FAIL:
       return { ...state, error: action.error, sending: false }
     case QB.chat.EVENT_TYPE.RECEIVED_NEW_MESSAGE: {
       dialogMessages = (state.messages[action.payload.dialogId] || []).slice()

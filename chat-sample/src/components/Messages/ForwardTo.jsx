@@ -71,15 +71,19 @@ export default class ForwardTo extends React.Component {
     }
     const { attachments, body } = message
     const originDialog = dialogs.find(dialog => dialog.id === message.dialogId)
-    const promises = selected.map(dialogId => sendMessage({
-      attachments,
-      body,
-      dialogId,
-      properties: {
-        originDialogId: message.dialogId,
-        originDialogName: originDialog ? originDialog.name : '',
-      }
-    }))
+    const promises = selected.map(dialogId => new Promise((resolve, reject) =>
+      sendMessage({
+        attachments,
+        body,
+        dialogId,
+        properties: {
+          originDialogId: message.dialogId,
+          originDialogName: originDialog ? originDialog.name : '',
+        },
+        resolve,
+        reject,
+      })
+    ))
     Promise.all(promises).then(() => navigation.goBack())
   }
 

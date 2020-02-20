@@ -1,8 +1,7 @@
 import { connect } from 'react-redux'
 
 import ForwardTo from '../../components/Messages/ForwardTo'
-import { dialogSelectReset } from '../../actionCreators'
-import { sendMessage } from '../../thunks'
+import { dialogSelectReset, messageSend } from '../../actionCreators'
 
 const mapStateToProps = ({ dialogs }) => ({
   dialogs: dialogs.dialogs,
@@ -12,7 +11,7 @@ const mapStateToProps = ({ dialogs }) => ({
 
 const mapDispatchToProps = {
   cancel: dialogSelectReset,
-  sendMessage,
+  sendMessage: messageSend,
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(ForwardTo)

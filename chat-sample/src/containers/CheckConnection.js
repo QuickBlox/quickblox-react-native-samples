@@ -2,7 +2,7 @@ import { connect } from 'react-redux'
 
 import CheckConnection from '../components/CheckConnection'
 
-import { connectAndSubscribe } from '../thunks'
+import { chatConnectAndSubscribe } from '../actionCreators'
 
 const mapStateToProps = ({ chat }) => ({
   connected: chat.connected,
@@ -10,7 +10,7 @@ const mapStateToProps = ({ chat }) => ({
 })
 
 const mapDispatchToProps = {
-  connectAndSubscribe
+  connectAndSubscribe: chatConnectAndSubscribe
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(CheckConnection)

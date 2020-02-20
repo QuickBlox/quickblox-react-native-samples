@@ -74,28 +74,30 @@ export default class Login extends React.Component {
 
   submit = ({ login, username }) => {
     const { createUser, signIn } = this.props
-    signIn({ login }).then(result => {
-      if (result && result.error) {
-        if (result.error.toLowerCase().indexOf('unauthorized') > -1) {
+    new Promise((resolve, reject) => {
+      signIn({ login, resolve, reject })
+    }).then(action => {
+      this.checkIfUsernameMatch(username, action.payload.user)
+    }).catch(action => {
+      if (action.error.toLowerCase().indexOf('unauthorized') > -1) {
+        new Promise((resolve, reject) => {
           createUser({
             fullName: username.trim(),
             login: login.trim(),
             password: 'quickblox',
-          }).then(userCreateAction => {
-            if (userCreateAction && userCreateAction.error) {
-              showError(
-                'Failed to create user account',
-                userCreateAction.error
-              )
-            } else {
-              this.submit({ login, username })
-            }
+            resolve,
+            reject
           })
-        } else {
-          showError('Failed to sign in', result.error)
-        }
+        }).then(() => {
+          this.submit({ login, username })
+        }).catch(userCreateAction => {
+          const { error } = userCreateAction
+          if (error) {
+            showError('Failed to create user account', error)
+          }
+        })
       } else {
-        this.checkIfUsernameMatch(username, result.payload.user)
+        showError('Failed to sign in', action.error)
       }
     })
   }
@@ -103,23 +105,25 @@ export default class Login extends React.Component {
   checkIfUsernameMatch = (username, user) => {
     const { updateUser } = this.props
     const update = user.fullName !== username.trim() ?
-      updateUser({ fullName: username, login: user.login }) :
+      new Promise((resolve, reject) => updateUser({
+        fullName: username,
+        login: user.login,
+        resolve,
+        reject,
+      })) :
       Promise.resolve()
-    update.then(action => {
-      if (action && action.error) {
+    update
+      .then(this.connectAndRedirect)
+      .catch(action => {
         showError('Failed to update user', action.error)
-      } else {
-        this.connectAndRedirect()
-      }
-    })
+      })
   }
 
   connectAndRedirect = () => {
     const { connectAndSubscribe, navigation } = this.props
-    connectAndSubscribe().then(() => {
-      setupPushNotifications()
-      navigation.navigate('Chat')
-    })
+    connectAndSubscribe()
+    setupPushNotifications()
+    navigation.navigate('Chat')
   }
 
   renderForm = (formProps) => {

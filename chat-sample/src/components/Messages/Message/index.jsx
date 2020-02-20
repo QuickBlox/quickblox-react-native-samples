@@ -9,7 +9,7 @@ import Shadow from './Shadow'
 import { colors } from '../../../theme'
 import styles from './styles'
 
-export default class Message extends React.Component {
+export default class Message extends React.PureComponent {
 
   hasImageAttachment = false
   hasVideoAttachment = false
@@ -39,21 +39,6 @@ export default class Message extends React.Component {
       const [attachment] = attachments
       getPrivateUrl(attachment.id)
     }
-  }
-
-  shouldComponentUpdate(nextProps) {
-    const { imageUrl, message, sender } = this.props
-    const { deliveredIds = [], readIds = [] } = message
-    const {
-      deliveredIds: _deliveredIds = [],
-      readIds: _readIds = []
-    } = nextProps.message
-    return (
-      deliveredIds.length !== _deliveredIds.length ||
-      imageUrl !== nextProps.imageUrl ||
-      readIds.length !== _readIds.length ||
-      sender !== nextProps.sender
-    )
   }
 
   onForwardPress = () => {
@@ -187,7 +172,7 @@ export default class Message extends React.Component {
       return (
         <View style={styles.messageView}>
           <View style={styles.systemMessage}>
-            <Text style={styles.messageSentAt}>
+            <Text style={[styles.messageSentAt, { textAlign: 'center' }]}>
               {body}
             </Text>
           </View>

@@ -18,6 +18,7 @@ import { FORM_ERROR } from 'final-form'
 import FormTextInput from '../FormTextInput'
 import { colors } from '../../theme'
 import styles from './styles'
+import { showError } from '../../NotificationService'
 
 const localStyles = StyleSheet.create({
   contentView: {
@@ -99,7 +100,7 @@ export default class DialogsCreate2 extends React.PureComponent {
 
   validate = ({ name = '' }) => {
     const errors = {}
-    if (!/^(?=.{3,20}$)(?!.*([\s])\1{2})[\w\s]+$/.test(name)) {
+    if (!/^.{3,20}$/.test(name)) {
       errors.name = 'Must be in a range from 3 to 20 characters'
     }
     return errors
@@ -114,39 +115,47 @@ export default class DialogsCreate2 extends React.PureComponent {
       sendMessage,
       users,
     } = this.props
-    return createDialog({ name, occupantsIds }).then(result => {
-      if (result.error) {
-        return { [FORM_ERROR]: result.error }
-      } else {
-        const myName = currentUser.fullName || currentUser.login
-        const opponentsNames = occupantsIds.map(userId => {
-          const user = users.find(user => user.id === userId)
-          return user ? (user.fullName || user.login || user.email) : undefined
-        })
-        const body = (
-          myName +
-          ' created new dialog with: ' +
-          opponentsNames.join(', ')
-        )
-        sendMessage({
-          dialogId: result.dialog.id,
-          body,
-          properties: { notification_type: 1 }
-        })
+    return new Promise((resolve, reject) => {
+      createDialog({ name, occupantsIds, resolve, reject })
+    })
+    .then(action => {
+      const dialog = action.payload
+      const myName = (
+        currentUser.fullName || currentUser.login || currentUser.email
+      )
+      const opponentsNames = occupantsIds.map(userId => {
+        const user = users.find(user => user.id === userId)
+        return user ? (user.fullName || user.login || user.email) : undefined
+      })
+      const body = (
+        myName +
+        ' created new dialog with: ' +
+        opponentsNames.join(', ')
+      )
+      new Promise((resolve, reject) => sendMessage({
+        dialogId: dialog.id,
+        body,
+        properties: { notification_type: 1 },
+        resolve,
+        reject,
+      }))
+      .then(() => {
         const reset = StackActions.reset({
           index: 1,
           actions: [
             NavigationActions.navigate({ routeName: 'Dialogs' }),
             NavigationActions.navigate({
               routeName: 'Messages',
-              params: { dialog: result.dialog },
-              key: result.dialog.id
+              params: { dialog },
+              key: dialog.id
             })
           ]
         })
         navigation.dispatch(reset)
-      }
+      })
+      .catch(action => showError('Failed to send message', action.error))
     })
+    .catch(action => ({ [FORM_ERROR]: action.error }))
   }
 
   renderForm = ({ handleSubmit }) => {

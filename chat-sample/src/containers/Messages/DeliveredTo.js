@@ -1,7 +1,7 @@
 import { connect } from 'react-redux'
 
 import DeliveredTo from '../../components/Messages/DeliveredTo'
-import { getUsers } from '../../thunks'
+import { usersGet } from '../../actionCreators'
 
 const mapStateToProps = ({ users }, { navigation }) => {
   const message = navigation.getParam('message')
@@ -16,6 +16,6 @@ const mapStateToProps = ({ users }, { navigation }) => {
   }
 }
 
-const mapDispatchToProps = { getUsers }
+const mapDispatchToProps = { getUsers: usersGet }
 
 export default connect(mapStateToProps, mapDispatchToProps)(DeliveredTo)

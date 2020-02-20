@@ -1,8 +1,7 @@
 import { connect } from 'react-redux'
 
 import DialogsList from '../../components/Dialogs/List'
-import { dialogSelect } from '../../actionCreators'
-import { getDialogs } from '../../thunks'
+import { dialogGet, dialogSelect } from '../../actionCreators'
 
 const mapStateToProps = ({ dialogs }, { exclude = [] }) => {
   const { dialogs: data, limit, loading, selected, skip, total } = dialogs
@@ -22,7 +21,7 @@ const mapStateToProps = ({ dialogs }, { exclude = [] }) => {
 }
 
 const mapDispatchToProps = {
-  getDialogs,
+  getDialogs: dialogGet,
   selectDialog: dialogSelect,
 }
 

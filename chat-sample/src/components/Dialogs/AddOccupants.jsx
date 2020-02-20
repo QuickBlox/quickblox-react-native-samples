@@ -6,6 +6,7 @@ import UsersFilter from '../../containers/Users/Filter'
 import UsersList from '../../containers/Users/List'
 import { colors } from '../../theme'
 import styles from './styles'
+import { showError } from '../../NotificationService'
 
 const localStyles = StyleSheet.create({
   contentView: {
@@ -44,8 +45,13 @@ export default class AddOccupants extends React.Component {
   }
 
   componentDidMount() {
-    const { navigation, selected } = this.props
-    navigation.setParams({ onDonePress: this.updateDialog, selected })
+    const { dialog, navigation, selected } = this.props
+    const dialogParam = navigation.getParam('dialog', { occupantsIds: [] })
+    const navParams = { onDonePress: this.updateDialog, selected }
+    if (dialog.occupantsIds.length !== dialogParam.occupantsIds.length) {
+      navParams.dialog = dialog
+    }
+    navigation.setParams(navParams)
   }
 
   shouldComponentUpdate(nextProps) {
@@ -63,40 +69,50 @@ export default class AddOccupants extends React.Component {
   updateDialog = () => {
     const {
       currentUser,
+      dialog,
       navigation,
       selected = [],
       sendMessage,
       updateDialog,
       users,
     } = this.props
-    const dialog = navigation.getParam('dialog')
     if (dialog && selected.length && updateDialog) {
-      updateDialog({
+      new Promise((resolve, reject) => updateDialog({
         dialogId: dialog.id,
-        addUsers: selected
-      }).then(result => {
-        if (result && result.payload) {
-          const myName = currentUser.fullName || currentUser.login
-          const newUsersNames = selected.map(userId => {
-            const user = users.find(usr => usr.id === userId)
-            return user ? (user.fullName || user.login) : undefined
-          })
-          const body = (
-            `${myName} added ${newUsersNames.join(', ')} to the conversation`
-          )
+        addUsers: selected,
+        resolve,
+        reject,
+      }))
+      .then(action => {
+        const myName = currentUser.fullName || currentUser.login
+        const newUsersNames = selected.map(userId => {
+          const user = users.find(usr => usr.id === userId)
+          return user ? (user.fullName || user.login) : undefined
+        })
+        const body = (
+          `${myName} added ${newUsersNames.join(', ')} to the conversation`
+        )
+        new Promise((resolve, reject) => {
           sendMessage({
             dialogId: dialog.id,
             body,
-            properties: { notification_type: 2 }
+            properties: { notification_type: 2 },
+            resolve,
+            reject,
           })
-          navigation.navigate('DialogInfo', { dialog: result.payload })
-        }
+        })
+        .then(() => navigation.navigate(
+          'DialogInfo',
+          { dialog: action.payload }
+        ))
+        .catch(action => showError('Failed to send message', action.error))
       })
+      .catch(action => showError('Failed to update dialog', action.error))
     }
   }
 
   render() {
-    const dialog = this.props.navigation.getParam('dialog', {})
+    const { dialog } = this.props
     const { occupantsIds = [] } = dialog
     return (
       <SafeAreaView style={styles.safeArea}>

@@ -1,8 +1,7 @@
 import { connect } from 'react-redux'
 
 import DialogsCreate1 from '../../components/Dialogs/Create1'
-import { dialogCreateCancel } from '../../actionCreators'
-import { createDialog } from '../../thunks'
+import { dialogCreate, dialogCreateCancel } from '../../actionCreators'
 
 const mapStateToProps = ({ auth, users }) => ({
   selected: users.selected,
@@ -10,7 +9,7 @@ const mapStateToProps = ({ auth, users }) => ({
 
 const mapDispatchToProps = {
   cancel: dialogCreateCancel,
-  createDialog,
+  createDialog: dialogCreate,
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(DialogsCreate1)

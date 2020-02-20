@@ -8,6 +8,7 @@ import {
   FILE_PUBLIC_URL_FAIL,
   FILE_PUBLIC_URL_REQUEST,
   FILE_PUBLIC_URL_SUCCESS,
+  FILE_UPLOAD_CANCEL,
   FILE_UPLOAD_FAIL,
   FILE_UPLOAD_REQUEST,
   FILE_UPLOAD_SUCCESS,
@@ -25,8 +26,8 @@ export function fileGetInfoFail(error) {
   return { type: FILE_GET_INFO_FAIL, error }
 }
 
-export function fileUpload(url) {
-  return { type: FILE_UPLOAD_REQUEST, payload: url }
+export function fileUpload(payload) {
+  return { type: FILE_UPLOAD_REQUEST, payload }
 }
 
 export function fileUploadSucess(file) {
@@ -35,6 +36,10 @@ export function fileUploadSucess(file) {
 
 export function fileUploadFail(error) {
   return { type: FILE_UPLOAD_FAIL, error }
+}
+
+export function fileUploadCancel() {
+  return { type: FILE_UPLOAD_CANCEL }
 }
 
 export function privateUrlGet(uid) {

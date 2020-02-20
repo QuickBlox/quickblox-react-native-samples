@@ -22,8 +22,8 @@ export function sessionGetFail(error) {
   return { type: AUTH_GET_SESSION_FAIL, error }
 }
 
-export function loginRequest({ login, password }) {
-  return { type: AUTH_LOGIN_REQUEST, payload: { login, password } }
+export function loginRequest(payload) {
+  return { type: AUTH_LOGIN_REQUEST, payload }
 }
 
 export function loginSuccess({ session, user }) {

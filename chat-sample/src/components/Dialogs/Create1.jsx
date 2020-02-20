@@ -69,18 +69,19 @@ export default class DialogsCreate1 extends React.Component {
   createHandler = () => {
     const { createDialog, navigation, selected } = this.props
     if (selected.length === 1) {
-      createDialog({ occupantsIds: selected }).then(result => {
-        if (result.error) {
-          showError('Failed to create dialog', result.error)
-        } else {
-          const reset = StackActions.replace({
-            newKey: result.dialog.id,
-            params: { dialog: result.dialog },
-            routeName: 'Messages',
-          })
-          navigation.dispatch(reset)
-        }
+      new Promise((resolve, reject) => {
+        createDialog({ occupantsIds: selected, resolve, reject })
       })
+      .then(action => {
+        const dialog = action.payload
+        const reset = StackActions.replace({
+          newKey: dialog.id,
+          params: { dialog },
+          routeName: 'Messages',
+        })
+        navigation.dispatch(reset)
+      })
+      .catch(action => showError('Failed to create dialog', action.error))
     } else {
       navigation.push('DialogsCreate2')
     }

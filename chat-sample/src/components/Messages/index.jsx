@@ -15,6 +15,7 @@ import MessagesList from '../../containers/Messages/List'
 import MessageInput from '../../containers/Messages/MessageInput'
 import MoreMenu from './MoreMenu'
 import styles from './styles'
+import { showError } from '../../NotificationService'
 
 const localStyles = StyleSheet.create({
   titleView: {
@@ -55,7 +56,7 @@ const keyboardViewProps = Platform.select({
   }
 })
 
-export default class Messages extends React.PureComponent {
+export default class Messages extends React.Component {
 
   static navigationOptions = ({ navigation }) => {
     const dialog = navigation.getParam('dialog', {})
@@ -97,42 +98,67 @@ export default class Messages extends React.PureComponent {
   }
 
   componentDidMount() {
-    const { navigation } = this.props
-    navigation.setParams({ leaveDialog: this.leaveDialog })
+    const { dialog, navigation } = this.props
+    const navParamDialog = navigation.getParam('dialog', {})
+    const navParams = { leaveDialog: this.leaveDialog }
+    if (dialog && !this.dialogsEqual(dialog, navParamDialog)) {
+      navParams.dialog = dialog
+    }
+    navigation.setParams(navParams)
+  }
+
+  shouldComponentUpdate(nextProps) {
+    const { dialog } = this.props
+    if (dialog && nextProps.dialog) {
+      if (!this.dialogsEqual(dialog, nextProps.dialog)) {
+        nextProps.navigation.setParams({ dialog: nextProps.dialog })
+        return true
+      }
+    }
+    return false
+  }
+
+  dialogsEqual = (dialog1, dialog2) => {
+    if ((dialog1 && !dialog2) || (!dialog1 && dialog2)) {
+      return false
+    }
+    const idsEqual = dialog1.id === dialog2.id
+    let occupantsEqual = true
+    if (dialog1.occupantsIds && dialog2.occupantsIds) {
+        if (dialog1.occupantsIds.length === dialog2.occupantsIds.length) {
+          occupantsEqual = dialog1.occupantsIds.every(userId =>
+            dialog2.occupantsIds.indexOf(userId) > -1
+          )
+        } else {
+          occupantsEqual = false
+        }
+    }
+    const nameEqual = dialog1.name === dialog2.name
+    const lastMessageEqual = dialog1.lastMessage === dialog2.lastMessage
+    return idsEqual && nameEqual && lastMessageEqual && occupantsEqual
   }
 
   leaveDialog = () => {
-    const { currentUser, navigation, leaveDialog, sendMessage } = this.props
-    const dialog = navigation.getParam('dialog', {})
-    let leaveMessage
-    if (dialog.type === QB.chat.DIALOG_TYPE.CHAT) {
-      leaveMessage = Promise.resolve()
-    } else {
-      const myName = (
-        currentUser.fullName || currentUser.login || currentUser.email
-      )
-      const body = `${myName} left the dialog`
-      leaveMessage = sendMessage({
-        dialogId: dialog.id,
-        body,
-        properties: { notification_type: 3 }
-      })
-    }
-    leaveMessage.then(() => leaveDialog(dialog.id)).then(action => {
-      if (!action || !action.error) {
-        navigation.navigate('Dialogs')
-      }
+    const { dialog, navigation, leaveDialog } = this.props
+    new Promise((resolve, reject) => {
+      leaveDialog({ dialogId: dialog.id, resolve, reject })
     })
+    .then(() => navigation.navigate('Dialogs'))
+    .catch(action => showError('Failed to leave dialog', action.error))
   }
 
   render() {
-    const { id } = this.props.navigation.getParam('dialog', {})
+    const { dialog, navigation } = this.props
+    const { id } = dialog ? dialog : navigation.getParam('dialog', {})
     return (
       <KeyboardAvoidingView
         {...keyboardViewProps}
         style={{ flex: 1 }}
       >
-        <SafeAreaView style={styles.safeArea}>
+        <SafeAreaView
+          forceInset={{ top: 'never', bottom: 'always' }}
+          style={styles.safeArea}
+        >
           <MessagesList dialogId={id} />
           <MessageInput dialogId={id} />
         </SafeAreaView>
