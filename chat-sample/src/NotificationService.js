@@ -5,9 +5,10 @@ import { Platform } from 'react-native'
 import QB from 'quickblox-react-native-sdk'
 
 import { saveUdid, removeUdid } from './actionCreators'
-import gServices from '../android/app/google-services.json'
 import { store } from './store'
 import { colors } from './theme'
+// uncomment if added google-services.json
+// import gServices from '../android/app/google-services.json'
 
 /**
  * Show error message with title and description (optional)

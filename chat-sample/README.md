@@ -26,4 +26,21 @@ export default {
 }
 ```
 8. Run the code sample.  
-`react-native run-android` OR `react-native run-ios`
+`react-native run-android` OR `react-native run-ios`  
+
+**NOTE**: in order to receive push notifications you should make following changes:  
+### Android
+1. Set up push notifications as described in [Android Push Notifications guide](https://docs.quickblox.com/docs/android-push-notifications)
+2. Put `google-services.json` to your app (in `android/app` folder)
+3. Uncomment following code:  
+​
+`android/app/build.gradle`
+```
+// apply plugin: 'com.google.gms.google-services'
+```
+`src/NotificationService.js`
+```
+// import gServices from '../android/app/google-services.json'
+```
+### iOS
+Configure push notifications as described in [iOS Push notifications guide](https://docs.quickblox.com/docs/ios-push-notifications)

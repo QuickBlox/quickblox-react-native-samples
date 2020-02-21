@@ -20,7 +20,7 @@ PODS:
     - glog
   - glog (0.3.5)
   - QuickBlox (2.17.4)
-  - quickblox-react-native-sdk (0.5.0-beta):
+  - quickblox-react-native-sdk (0.5.1-beta):
     - QuickBlox (~> 2.17.4)
     - Quickblox-WebRTC (~> 2.7.4)
     - React (>= 0.60.0)
@@ -355,7 +355,7 @@ SPEC CHECKSUMS:
   Folly: 30e7936e1c45c08d884aa59369ed951a8e68cf51
   glog: 1f3da668190260b06b429bb211bfbee5cd790c28
   QuickBlox: 992be26bc127313991a1337dfd98c9359832c147
-  quickblox-react-native-sdk: f819eb490b3888fdd61bbfbd4cefababcf85fdbf
+  quickblox-react-native-sdk: 41aade693a943efbafa22a24399e574d8f5a014a
   Quickblox-WebRTC: cd1a5159c2ddb5b0feaf00b7a38b5551743eb067
   RCTRequired: c639d59ed389cfb1f1203f65c2ea946d8ec586e2
   RCTTypeSafety: dc23fb655d6c77667c78e327bf661bc11e3b8aec
