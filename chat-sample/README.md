@@ -1,8 +1,17 @@
-### To run a code sample, follow the steps below:
+### Get application credentials
+
+QuickBlox application includes everything that brings messaging right into your application - chat, video calling, users, push notifications, etc. To create a QuickBlox application, follow the steps below:
+
+1. Register a new account following [this link](https://admin.quickblox.com/signup). Type in your email and password to sign in. You can also sign in with your Google or Github accounts.
+2. Create the app clicking **New app** button.
+3. Configure the app. Type in the information about your organization into corresponding fields and click **Add** button.
+4. Go to **Dashboard** => **_YOUR_APP_** => **Overview** section and copy your **Application ID**, **Authorization Key**, **Authorization Secret**, and **Account Key**.
+
+### Run Chat sample
 
 1. Install [Node.js](https://nodejs.org) and [npm](https://www.npmjs.com/get-npm) if you don’t have it.
 2. Install [CocoaPods](https://guides.cocoapods.org/using/getting-started.html) (for iOS project only) if you don’t have it.
-3. Setup the [React Native environment](https://facebook.github.io/react-native/docs/getting-started.html#installing-dependencies) if you don’t have it.
+3. Setup the [React Native environment](https://reactnative.dev/docs/environment-setup) if you don’t have it.
 4. Clone repository with the sample.
 5. Open a terminal and enter the commands below in your project path.
 ```bash
@@ -13,8 +22,7 @@ extra step for iOS
 cd ios
 pod install
 ```
-6. Register a FREE QuickBlox account following [this link](https://admin.quickblox.com/signup).
-7. [Create a new app in the Dashboard](https://docs.quickblox.com/docs/react-native-quick-start#section-create-a-new-app-in-the-dashboard) and get **appId**, **authKey**, **authSecret**, **accountKey**. Put these values in `src/QBConfig.js` file .
+6. Get **appId**, **authKey**, **authSecret**, **accountKey** from your app and put these values in `src/QBConfig.js` file .
 ```javascript
 export default {
   appId: xxxxxxx,
