@@ -13,7 +13,7 @@
     "quickblox-react-native-sdk": "^0.5.1-beta",
     "react": "16.9.0",
     "react-final-form": "^6.3.3",
-    "react-native": "^0.61.5",
+    "react-native": "^0.62.3",
     "react-native-document-picker": "^3.2.4",
     "react-native-flash-message": "^0.1.15",
     "react-native-gesture-handler": "^1.5.2",
