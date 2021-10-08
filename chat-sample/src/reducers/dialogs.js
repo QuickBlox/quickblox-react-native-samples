@@ -1,13 +1,10 @@
-import QB from 'quickblox-react-native-sdk'
+import QB from 'quickblox-react-native-sdk';
 
 import {
   AUTH_LOGOUT_SUCCESS,
   DIALOGS_CREATE_FAIL,
   DIALOGS_CREATE_REQUEST,
   DIALOGS_CREATE_SUCCESS,
-  DIALOGS_DELETE_FAIL,
-  DIALOGS_DELETE_REQUEST,
-  DIALOGS_DELETE_SUCCESS,
   DIALOGS_EDIT_FAIL,
   DIALOGS_EDIT_REQUEST,
   DIALOGS_EDIT_SUCCESS,
@@ -22,46 +19,41 @@ import {
   DIALOGS_UNREAD_COUNT_INCREMENT,
   DIALOGS_SELECT,
   DIALOGS_SELECT_RESET,
-} from '../constants'
+} from '../constants';
 
 const initialState = {
   dialogs: [],
   error: undefined,
   filter: '',
-  limit: 30,
+  limit: 15,
   loading: false,
   selected: [],
   skip: 0,
   total: 0,
-}
+};
 
 export default (state = initialState, action) => {
   switch (action.type) {
-    case DIALOGS_SET_FILTER: return { ...state, filter: action.payload }
+    case DIALOGS_SET_FILTER:
+      return {...state, filter: action.payload};
     case DIALOGS_GET_REQUEST:
     case DIALOGS_CREATE_REQUEST:
     case DIALOGS_EDIT_REQUEST:
     case DIALOGS_LEAVE_REQUEST:
-    case DIALOGS_DELETE_REQUEST:
-      return { ...state, error: undefined, loading: true }
+      return {...state, error: undefined, loading: true};
     case DIALOGS_GET_SUCCESS: {
-      const {
-        append,
-        dialogs: newDialogs,
-        limit,
-        skip,
-        total,
-      } = action.payload
+      const {append, dialogs: newDialogs, limit, skip, total} = action.payload;
       if (append) {
-        const dialogs = state.dialogs.slice()
+        const dialogs = state.dialogs.slice();
         newDialogs.forEach(dialog => {
-          index = dialogs.findIndex(d => d.id === dialog.id)
-          if (index === -1) {
-            dialogs.push(dialog)
+          const index = dialogs.findIndex(d => d.id === dialog.id);
+          if (index > -1) {
+            dialogs[index] = {...dialogs[index], ...dialog};
           } else {
-            dialogs[index] = { ...dialogs[index], ...dialog }
+            dialogs.push(dialog);
           }
-        })
+        });
+        dialogs.sort((a, b) => b.lastMessageDateSent - a.lastMessageDateSent);
         return {
           ...state,
           dialogs,
@@ -69,7 +61,7 @@ export default (state = initialState, action) => {
           loading: false,
           skip,
           total,
-        }
+        };
       } else {
         return {
           ...state,
@@ -78,126 +70,126 @@ export default (state = initialState, action) => {
           loading: false,
           skip,
           total,
-        }
+        };
       }
     }
     case DIALOGS_CREATE_SUCCESS: {
-      const dialogs = state.dialogs.slice()
-      const index = dialogs.findIndex(dialog =>
-        dialog.id === action.payload.id
-      )
+      const dialogs = state.dialogs.slice();
+      const index = dialogs.findIndex(
+        dialog => dialog.id === action.payload.id,
+      );
       if (index === -1) {
-        dialogs.push(action.payload)
+        dialogs.unshift(action.payload);
       } else {
-        dialogs[index] = { ...dialogs[index], ...action.payload }
+        dialogs[index] = {...dialogs[index], ...action.payload};
       }
-      return { ...state, dialogs, loading: false }
+      return {...state, dialogs, loading: false};
     }
     case DIALOGS_EDIT_SUCCESS: {
-      const dialogs = state.dialogs.slice()
-      const index = dialogs.findIndex(dialog =>
-        dialog.id === action.payload.id
-      )
+      const dialogs = state.dialogs.slice();
+      const index = dialogs.findIndex(
+        dialog => dialog.id === action.payload.id,
+      );
       if (index > -1) {
-        dialogs[index] = { ...dialogs[index], ...action.payload }
+        dialogs[index] = {...dialogs[index], ...action.payload};
       }
-      return { ...state, dialogs, loading: false }
+      dialogs.sort((a, b) => b.lastMessageDateSent - a.lastMessageDateSent);
+      return {...state, dialogs, loading: false};
     }
-    case DIALOGS_LEAVE_SUCCESS:
-    case DIALOGS_DELETE_SUCCESS: {
-      const dialogId = action.payload
-      const dialogs = state.dialogs.slice()
-      const index = dialogs.findIndex(dialog => dialog.id === dialogId)
-      if (index > -1) {
-        dialogs.splice(index, 1)
-      }
-      return { ...state, dialogs, error: undefined, loading: false }
+    case DIALOGS_LEAVE_SUCCESS: {
+      const dialogsIds = action.payload;
+      const dialogs = state.dialogs.filter(
+        dialog => !dialogsIds.includes(dialog.id),
+      );
+      return {...state, dialogs, error: undefined, loading: false};
     }
     case DIALOGS_GET_FAIL:
     case DIALOGS_CREATE_FAIL:
     case DIALOGS_EDIT_FAIL:
     case DIALOGS_LEAVE_FAIL:
-    case DIALOGS_DELETE_FAIL:
-      return { ...state, error: action.error, loading: false }
+      return {...state, error: action.error, loading: false};
     case DIALOGS_UNREAD_COUNT_INCREMENT: {
-      const dialogs = state.dialogs.slice()
-      const index = dialogs.findIndex(dialog =>
-        dialog.id === action.payload.dialogId
-      )
+      const dialogs = state.dialogs.slice();
+      const index = dialogs.findIndex(
+        dialog => dialog.id === action.payload.dialogId,
+      );
       if (index > -1) {
         dialogs[index] = {
           ...dialogs[index],
-          unreadMessagesCount: (dialogs[index].unreadMessagesCount || 0) + 1
-        }
+          unreadMessagesCount: (dialogs[index].unreadMessagesCount || 0) + 1,
+        };
       }
-      return { ...state, dialogs }
+      return {...state, dialogs};
     }
     case DIALOGS_UNREAD_COUNT_DECREMENT: {
-      const dialogs = state.dialogs.slice()
-      const index = dialogs.findIndex(dialog =>
-        dialog.id === action.payload.dialogId
-      )
+      const dialogs = state.dialogs.slice();
+      const index = dialogs.findIndex(
+        dialog => dialog.id === action.payload.dialogId,
+      );
       if (index > -1) {
         dialogs[index] = {
           ...dialogs[index],
-          unreadMessagesCount: (dialogs[index].unreadMessagesCount || 1) - 1
-        }
+          unreadMessagesCount: (dialogs[index].unreadMessagesCount || 1) - 1,
+        };
       }
-      return { ...state, dialogs }
+      return {...state, dialogs};
     }
     case DIALOGS_SELECT: {
-      const dialogId = action.payload
-      const selected = state.selected.slice()
-      const index = state.selected.indexOf(dialogId)
+      const dialogId = action.payload;
+      const selected = state.selected.slice();
+      const index = state.selected.indexOf(dialogId);
       if (index > -1) {
-        selected.splice(index, 1)
+        selected.splice(index, 1);
       } else {
-        selected.push(dialogId)
+        selected.push(dialogId);
       }
-      return { ...state, selected }
+      return {...state, selected};
     }
     case DIALOGS_SELECT_RESET: {
-      return { ...state, selected: initialState.selected }
+      return {...state, selected: initialState.selected};
     }
     case QB.chat.EVENT_TYPE.USER_IS_TYPING: {
-      const dialogs = state.dialogs.slice()
-      const index = dialogs.findIndex(dialog =>
-        dialog.id === action.payload.dialogId
-      )
+      const dialogs = state.dialogs.slice();
+      const index = dialogs.findIndex(
+        dialog => dialog.id === action.payload.dialogId,
+      );
       if (index === -1) {
-        return state
+        return state;
       }
-      const dialog = dialogs[index]
+      const dialog = dialogs[index];
       if (!dialog.typing) {
-        dialogs[index] = { ...dialog, typing: [action.payload.userId] }
+        dialogs[index] = {...dialog, typing: [action.payload.userId]};
       } else {
-        const { userId } = action.payload
+        const {userId} = action.payload;
         dialogs[index] = {
           ...dialog,
-          typing: dialog.typing.indexOf(userId) > -1 ?
-            dialog.typing :
-            dialog.typing.concat(action.payload.userId)
-        }
+          typing:
+            dialog.typing.indexOf(userId) > -1
+              ? dialog.typing
+              : dialog.typing.concat(action.payload.userId),
+        };
       }
-      return { ...state, dialogs }
+      return {...state, dialogs};
     }
     case QB.chat.EVENT_TYPE.USER_STOPPED_TYPING: {
-      const dialogs = state.dialogs.slice()
-      const index = dialogs.findIndex(dialog =>
-        dialog.id === action.payload.dialogId
-      )
+      const dialogs = state.dialogs.slice();
+      const index = dialogs.findIndex(
+        dialog => dialog.id === action.payload.dialogId,
+      );
       if (index > -1) {
-        const dialog = dialogs[index]
+        const dialog = dialogs[index];
         dialogs[index] = {
           ...dialog,
-          typing: dialog.typing ?
-            dialog.typing.filter(id => id !== action.payload.userId) :
-            []
-        }
+          typing: dialog.typing
+            ? dialog.typing.filter(id => id !== action.payload.userId)
+            : [],
+        };
       }
-      return { ...state, dialogs }
+      return {...state, dialogs};
     }
-    case AUTH_LOGOUT_SUCCESS: return initialState
-    default: return state
+    case AUTH_LOGOUT_SUCCESS:
+      return initialState;
+    default:
+      return state;
   }
-}
+};

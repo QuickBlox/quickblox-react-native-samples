@@ -1,4 +1,4 @@
-import { StyleSheet } from 'react-native'
+import {StyleSheet} from 'react-native';
 
 export default StyleSheet.create({
   attachButton: {
@@ -11,4 +11,4 @@ export default StyleSheet.create({
     resizeMode: 'contain',
     width: 30,
   },
-})
+});

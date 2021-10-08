@@ -1,22 +1,23 @@
-import React from 'react'
-import { Provider } from 'react-redux'
-import { PersistGate } from 'redux-persist/integration/react'
-import { enableScreens } from 'react-native-screens'
+import React from 'react';
+import {Provider} from 'react-redux';
+import {PersistGate} from 'redux-persist/integration/react';
+import {enableScreens} from 'react-native-screens';
 
-import App from './App'
-import Loading from './components/Loading'
-import configureStore from './store'
-import rootSaga from './sagas'
+import App from './App';
+import SplashScreen from './components/SplashScreen';
+import {setupPushNotifications} from './NotificationService';
+import configureStore from './store';
+import rootSaga from './sagas';
 
-enableScreens()
-
-const { runSaga, store, persistor } = configureStore()
-runSaga(rootSaga)
+const {runSaga, store, persistor} = configureStore();
+runSaga(rootSaga);
+enableScreens(false);
+setupPushNotifications();
 
 export default () => (
   <Provider store={store}>
-    <PersistGate loading={<Loading />} persistor={persistor}>
+    <PersistGate loading={<SplashScreen />} persistor={persistor}>
       <App />
     </PersistGate>
   </Provider>
-)
+);

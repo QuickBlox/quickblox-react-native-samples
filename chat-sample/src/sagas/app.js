@@ -1,15 +1,17 @@
-import { eventChannel } from 'redux-saga'
+import {eventChannel} from 'redux-saga';
 import {
   call,
+  delay,
+  fork,
   put,
   race,
   select,
   spawn,
   take,
   takeLatest,
-} from 'redux-saga/effects'
-import { AppState } from 'react-native'
-import QB from 'quickblox-react-native-sdk'
+} from 'redux-saga/effects';
+import {AppState, Platform} from 'react-native';
+import QB from 'quickblox-react-native-sdk';
 
 import {
   appStartFail,
@@ -19,100 +21,116 @@ import {
   chatDisconnect,
   dialogGet,
   messagesGet,
-} from '../actionCreators'
+} from '../actionCreators';
 import {
   CHAT_CONNECT_AND_SUBSCRIBE,
-  CHAT_CONNECT_FAIL,
   CHAT_CONNECT_SUCCESS,
   INIT_QB_REQUEST,
-} from '../constants'
-import { isChatConnected } from './chat'
-import Navigation from '../NavigationService'
+} from '../constants';
+import {isChatConnected} from './chat';
+import {getCurrentRoute} from '../Navigation';
 
 export function* appStart(action = {}) {
-  const config = action.payload
+  const config = action.payload;
   try {
-    yield call(QB.settings.init, config)
-    yield put(appStartSuccess())
+    yield call(QB.settings.init, config);
+    yield call(QB.settings.enableAutoReconnect, {enable: true});
+    yield put(appStartSuccess());
   } catch (e) {
-    yield put(appStartFail(e.message))
+    yield put(appStartFail(e.message));
   }
 }
 
 export function* connectAndSubscribe() {
-  const { user } = yield select(state => state.auth)
-  if (!user) return
-  const connected = yield call(isChatConnected)
-  const loading = yield select(({ chat }) => chat.loading)
-  if (!connected) {
-    if (!loading) {
-      yield put(chatConnect({
-          userId: user.id,
-          password: user.password,
-      }))
-    }
-    const { fail } = yield race({
-      success: take(CHAT_CONNECT_SUCCESS),
-      fail: take(CHAT_CONNECT_FAIL),
-    })
-    if (fail) {
-      return
+  const {dialogsLimit, dialogsLoading, ready, user} = yield select(state => ({
+    dialogsLimit: state.dialogs.limit,
+    dialogsLoading: state.dialogs.loading,
+    ready: state.app.ready,
+    user: state.auth.user,
+  }));
+  if (!user || !ready) {
+    return;
+  }
+  if (!dialogsLoading) {
+    // make API call to load latest dialogs
+    yield put(dialogGet({append: true, limit: dialogsLimit, skip: 0}));
+  }
+  const route = getCurrentRoute();
+  if (route) {
+    const {name, params = {}} = route;
+    // if dialog is opened - make API call and load latest messages for this chat
+    if (name === 'Messages' && params.dialogId) {
+      yield put(messagesGet({dialogId: params.dialogId}));
     }
   }
-  yield call(setupQBSettings)
-  yield put(dialogGet())
-  const route = Navigation.getCurrentRoute()
-  const { routeName, params = { dialog: {} } } = route || {}
-  if (routeName === 'Messages' && params.dialog.id) {
-    yield put(messagesGet({ dialogId: params.dialog.id }))
+  let chatConnected = false;
+  while (!chatConnected) {
+    chatConnected = yield call(isChatConnected);
+    if (!chatConnected) {
+      // connect to chat if not connected
+      yield put(
+        chatConnect({
+          password: user.password,
+          userId: user.id,
+        }),
+      );
+      const {success} = yield race({
+        success: take([CHAT_CONNECT_SUCCESS, QB.chat.EVENT_TYPE.CONNECTED]),
+        timeout: delay(10000),
+      });
+      if (success) {
+        chatConnected = true;
+      }
+    }
   }
 }
 
 function createAppStateChannel() {
   return eventChannel(emit => {
-    AppState.addEventListener('change', emit)
-    return () => AppState.removeEventListener('change', emit)
-  })
+    const subscription = AppState.addEventListener('change', emit);
+    return subscription.remove;
+  });
 }
 
 export function* startAppStateListener() {
   try {
-    const appStateChannel = yield call(createAppStateChannel)
+    const appStateChannel = yield call(createAppStateChannel);
     while (true) {
-      const nextAppState = yield take(appStateChannel)
-      yield call(appStateChangeHandler, nextAppState)
+      let nextAppState = yield take(appStateChannel);
+      if (Platform.OS === 'ios') {
+        while (true) {
+          const {debounce, latestAppState} = yield race({
+            debounce: delay(100),
+            latestAppState: take(appStateChannel),
+          });
+          if (debounce) {
+            yield fork(appStateChangeHandler, nextAppState);
+            break;
+          }
+          nextAppState = latestAppState;
+        }
+      } else {
+        yield call(appStateChangeHandler, nextAppState);
+      }
     }
   } catch (e) {
-    yield put({ type: 'ERROR', error: e.message })
+    yield put({error: e.message, type: 'APP_STATE_CHANNEL_ERROR'});
   }
 }
 
 function* appStateChangeHandler(appState) {
-  const { connected, user } = yield select(({ auth, chat }) => ({
+  const {connected, user} = yield select(({auth, chat}) => ({
     connected: chat.connected,
     user: auth.user,
-  }))
+  }));
   if (user) {
     if (appState.match(/inactive|background/)) {
       if (connected) {
-        yield put(chatDisconnect())
+        yield put(chatDisconnect());
       }
     } else {
-      yield put(chatConnectAndSubscribe())
+      yield put(chatConnectAndSubscribe());
     }
-  }
-}
-
-function* setupQBSettings() {
-  try {
-    yield call(QB.settings.initStreamManagement, {
-      autoReconnect: true,
-      messageTimeout: 10,
-    })
-    yield call(QB.settings.enableCarbons)
-    yield call(QB.settings.enableAutoReconnect, { enable: true })
-  } catch (e) {
-    yield put({ type: 'SETUP_QB_SETTINGS_ERROR', error: e.message })
   }
 }
 
@@ -120,4 +138,4 @@ export default [
   takeLatest(INIT_QB_REQUEST, appStart),
   takeLatest(CHAT_CONNECT_AND_SUBSCRIBE, connectAndSubscribe),
   spawn(startAppStateListener),
-]
+];

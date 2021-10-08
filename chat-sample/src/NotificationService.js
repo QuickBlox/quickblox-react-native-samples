@@ -1,113 +1,90 @@
-import { showMessage } from 'react-native-flash-message'
-import PushNotification from 'react-native-push-notification'
-import PushNotificationIOS from '@react-native-community/push-notification-ios'
-import { Platform } from 'react-native'
-import QB from 'quickblox-react-native-sdk'
+import {showMessage} from 'react-native-flash-message';
+import PushNotification, {Importance} from 'react-native-push-notification';
+import PushNotificationIOS from '@react-native-community/push-notification-ios';
+import {Platform} from 'react-native';
 
-import { saveUdid, removeUdid } from './actionCreators'
-import { store } from './store'
-import { colors } from './theme'
-// uncomment if added google-services.json
-// import gServices from '../android/app/google-services.json'
+import {saveToken} from './actionCreators';
+import {store} from './store';
+import {colors} from './theme';
+
+const NOTIFICATION_CHANNEL_ID = 'qb-rn-chat';
 
 /**
  * Show error message with title and description (optional)
- * @param {string} error 
- * @param {string=} description 
+ * @param {string} error
+ * @param {string=} description
  */
-export const showError = (error, description) => showMessage({
-  type: 'danger',
-  message: error,
-  description
-})
+export const showError = (error, description) =>
+  showMessage({
+    description,
+    message: error,
+    type: 'danger',
+  });
 
 /**
  * Show success message with title and description (optional)
- * @param {string} message 
- * @param {string=} description 
+ * @param {string} message
+ * @param {string=} description
  */
-export const showSuccess = (message, description) => showMessage({
-  type: 'success',
-  backgroundColor: colors.primary,
-  message,
-  description,
-})
+export const showSuccess = (message, description) =>
+  showMessage({
+    backgroundColor: colors.primary,
+    description,
+    message,
+    type: 'success',
+  });
 
 export const setupPushNotifications = () => {
-  let senderID
-  if (Platform.OS === 'android') {
-    if (gServices &&
-        gServices.project_info &&
-        gServices.project_info.project_number) {
-      senderID = gServices.project_info.project_number
-    } else {
-      return
-    }
-  }
   PushNotification.configure({
-    // (optional) Called when Token is generated (iOS and Android)
-    onRegister: function ({ token }) {
-      QB.subscriptions
-        .create({ deviceToken: token })
-        .then(subscriptions => {
-          const udid = subscriptions[0].deviceUdid
-          if (udid) {
-            store.dispatch(saveUdid(udid))
-          }
-        })
-        .catch(e => showError(
-          'Error occured while subscribing to push events',
-          e.message
-        ))
-    },
-
     // (required) Called when a remote or local notification is opened or received
-    onNotification: function (notification) {
+    onNotification: notification => {
+      console.log('Received notification:', notification);
       // process the notification
-      // required on iOS only (see fetchCompletionHandler docs: https://facebook.github.io/react-native/docs/pushnotificationios.html)
       if (Platform.OS === 'ios') {
         notification.finish(PushNotificationIOS.FetchResult.NoData);
+      } else {
+        const {local = false, message} = notification.data;
+        if (!local) {
+          PushNotification.localNotification({
+            channelId: NOTIFICATION_CHANNEL_ID, // (required) channelId, if the channel doesn't exist, notification will not trigger.
+            color: colors.primary, // (optional) default: system default
+            message, // (required)
+            userInfo: {...notification.data, local: true}, // (optional) default: {} (using null throws a JSON value '<null>' error)
+            vibrate: true, // (optional) default: true
+            vibration: 300, // vibration length in milliseconds, ignored if vibrate=false, default: 1000
+          });
+        }
       }
     },
+    // (optional) Called when Token is generated (iOS and Android)
+    onRegister: ({token}) => {
+      store.dispatch(saveToken(token));
+      const channelOptions = {
+        channelDescription: 'A channel for QuickBlox chat notifications', // (optional) default: undefined.
+        channelId: NOTIFICATION_CHANNEL_ID, // (required)
+        channelName: 'Chat', // (required)
+        importance: Importance.HIGH, // (optional) default: Importance.HIGH. Int value of the Android notification importance
+        playSound: true, // (optional) default: true
+        soundName: 'default', // (optional) See `soundName` parameter of `localNotification` function
+        vibrate: true, // (optional) default: true. Creates the default vibration pattern if true.
+      };
+      PushNotification.createChannel(
+        channelOptions,
+        created => console.log(`createChannel returned '${created}'`), // (optional) callback returns whether the channel was created, false means it already existed.
+      );
+    },
+    // (optional) Called when the user fails to register for remote notifications. Typically occurs when APNS is having issues, or the device is a simulator. (iOS)
+    onRegistrationError: err => {
+      __DEV__ && console.error(err.message, err);
+    },
 
-    // ANDROID ONLY: GCM or FCM Sender ID (product_number) (optional - not required for local notifications, but is need to receive remote push notifications)
-    senderID,
-
-    // IOS ONLY (optional): default: all - Permissions to register.
     permissions: {
       alert: true,
       badge: true,
-      sound: true
+      sound: true,
     },
 
-    // Should the initial notification be popped automatically
-    // default: true
     popInitialNotification: true,
-
-    /**
-     * (optional) default: true
-     * - Specified if permissions (ios) and token (android and ios) will requested or not,
-     * - if not, you must call PushNotificationsHandler.requestPermissions() later
-     */
-    requestPermissions: true
-  })
-}
-
-export const removePushSubscription = () => new Promise((resolve) => {
-  const { device: { udid } } = store.getState()
-  store.dispatch(removeUdid())
-  if (udid) {
-    QB.subscriptions
-      .get()
-      .then(subscriptions => {
-        subscriptions.forEach(subscription => {
-          if (subscription.deviceUdid === udid) {
-            QB.subscriptions.remove({ id: subscription.id })
-          }
-        })
-        resolve()
-      })
-  } else {
-    resolve()
-  }
-})
+    requestPermissions: true,
+  });
+};

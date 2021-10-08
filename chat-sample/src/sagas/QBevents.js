@@ -1,88 +1,128 @@
-import { eventChannel } from 'redux-saga'
+import {eventChannel} from 'redux-saga';
 import {
   call,
+  cancel,
   cancelled,
+  fork,
   put,
+  race,
   select,
-  spawn,
   take,
-} from 'redux-saga/effects'
-import QB from 'quickblox-react-native-sdk'
-import { NativeEventEmitter } from 'react-native'
+} from 'redux-saga/effects';
+import QB from 'quickblox-react-native-sdk';
+import {NativeEventEmitter} from 'react-native';
 
 import {
   dialogEditSuccess,
   dialogUnreadCountIncrement,
   messageMarkDelivered,
   dialogGet,
-} from '../actionCreators'
+} from '../actionCreators';
+import {
+  AUTH_LOGIN_SUCCESS,
+  AUTH_LOGOUT_SUCCESS,
+  CHAT_CONNECT_REQUEST,
+  CHAT_DISCONNECT_SUCCESS,
+  INIT_QB_REQUEST_SUCCESS,
+} from '../constants';
 
 function* handlewNewMessage(message) {
-  const { currentUser, dialogs } = yield select(({ auth, dialogs }) => ({
-    currentUser: auth.user,
-    dialogs: dialogs.dialogs,
-  }))
-  const dialog = dialogs.find(d => d.id === message.dialogId)
+  const {currentUser, dialogs, limit} = yield select(state => ({
+    currentUser: state.auth.user,
+    dialogs: state.dialogs.dialogs,
+    limit: state.dialogs.limit,
+  }));
+  const dialog = dialogs.find(d => d.id === message.dialogId);
   if (dialog) {
-    yield put(dialogEditSuccess({
-      ...dialog,
-      lastMessage: message.body,
-      lastMessageDateSent: message.dateSent,
-      lastMessageUserId: message.senderId
-    }))
+    yield put(
+      dialogEditSuccess({
+        ...dialog,
+        lastMessage: message.body,
+        lastMessageDateSent: message.dateSent,
+        lastMessageUserId: message.senderId,
+      }),
+    );
     if (currentUser && message.senderId !== currentUser.id) {
       if (!message.markable) {
-        yield put(messageMarkDelivered(message))
+        yield put(messageMarkDelivered(message));
       }
       if (dialog.type !== QB.chat.DIALOG_TYPE.PUBLIC_CHAT) {
-        yield put(dialogUnreadCountIncrement({
-          dialogId: message.dialogId
-        }))
+        yield put(
+          dialogUnreadCountIncrement({
+            dialogId: message.dialogId,
+          }),
+        );
       }
     }
   } else {
     // re-load dialogs to get new dialog(s) or update occupants list
-    yield put(dialogGet())
+    yield put(dialogGet({append: false, limit, skip: 0}));
   }
 }
 
-function* createChatEventsChannel() {
+function createChatEventsChannel() {
   return eventChannel(emitter => {
-    const chatEmitter = new NativeEventEmitter(QB.chat)
+    const chatEmitter = new NativeEventEmitter(QB.chat);
     const subscriptions = Object.keys(QB.chat.EVENT_TYPE).map(key =>
-      chatEmitter.addListener(QB.chat.EVENT_TYPE[key], emitter)
-    )
+      chatEmitter.addListener(QB.chat.EVENT_TYPE[key], emitter),
+    );
     return () => {
       while (subscriptions.length) {
-        const subscription = subscriptions.pop()
-        subscription.remove()
+        const subscription = subscriptions.pop();
+        subscription.remove();
       }
-    }
-  })
+    };
+  });
 }
 
-function* QBChatEventsSaga() {
-  const channel = yield call(createChatEventsChannel)
+function* processChatEvents() {
+  const channel = yield call(createChatEventsChannel);
   try {
     while (true) {
-      const event = yield take(channel)
-      yield put(event)
-      const { type, payload } = event
+      const event = yield take(channel);
+      yield put(event);
+      const {type, payload} = event;
       if (type === QB.chat.EVENT_TYPE.RECEIVED_NEW_MESSAGE) {
-        yield call(handlewNewMessage, payload)
+        yield call(handlewNewMessage, payload);
       } else if (type === QB.chat.EVENT_TYPE.RECEIVED_SYSTEM_MESSAGE) {
-        yield put(dialogGet())
+        const limit = yield select(({dialogs}) => dialogs.limit);
+        yield put(dialogGet({append: true, limit, skip: 0}));
       }
     }
   } catch (e) {
-    yield put({ type: 'ERROR', error: e.message })
+    yield put({error: e.message, type: 'CHAT_EVENTS_CHANNEL_ERROR'});
   } finally {
     if (yield cancelled()) {
-      channel.close()
+      channel.close();
     }
   }
 }
 
-export default [
-  spawn(QBChatEventsSaga),
-]
+function* subscribeToChatEvents() {
+  while (true) {
+    let task;
+    const {connect} = yield race({
+      connect: take(CHAT_CONNECT_REQUEST),
+      disconnect: take(CHAT_DISCONNECT_SUCCESS),
+    });
+    if (task) {
+      yield cancel(task);
+    }
+    if (connect) {
+      task = yield fork(processChatEvents);
+    }
+  }
+}
+
+function* QBChatEventsSaga() {
+  yield take(INIT_QB_REQUEST_SUCCESS);
+  while (true) {
+    const loggedIn = yield select(({auth}) => auth.loggedIn);
+    if (!loggedIn) {
+      yield take(AUTH_LOGIN_SUCCESS);
+    }
+    yield race([call(subscribeToChatEvents), take(AUTH_LOGOUT_SUCCESS)]);
+  }
+}
+
+export default [QBChatEventsSaga()];

@@ -14,70 +14,70 @@ import {
   MESSAGES_SYSTEM_SEND_FAIL,
   MESSAGES_SYSTEM_SEND_REQUEST,
   MESSAGES_SYSTEM_SEND_SUCCESS,
-} from '../constants'
+} from '../constants';
 
 export function messagesGet(query) {
-  return { type: MESSAGES_GET_REQUEST, payload: query }
+  return {payload: query, type: MESSAGES_GET_REQUEST};
 }
 
 export function messagesGetSuccess(response) {
-  return { type: MESSAGES_GET_SUCCESS, payload: response }
+  return {payload: response, type: MESSAGES_GET_SUCCESS};
 }
 
 export function messagesGetFail(error) {
-  return { type: MESSAGES_GET_FAIL, error }
+  return {error, type: MESSAGES_GET_FAIL};
 }
 
 export function messageMarkDelivered(message) {
   return {
+    payload: {message},
     type: MESSAGES_MARK_DELIVERED_REQUEST,
-    payload: { message }
-  }
+  };
 }
 
 export function messageMarkDeliveredSuccess() {
-  return { type: MESSAGES_MARK_DELIVERED_SUCCESS }
+  return {type: MESSAGES_MARK_DELIVERED_SUCCESS};
 }
 
 export function messageMarkDeliveredFail(error) {
-  return { type: MESSAGES_MARK_DELIVERED_FAIL, error }
+  return {error, type: MESSAGES_MARK_DELIVERED_FAIL};
 }
 
 export function messageMarkRead(message) {
   return {
+    payload: {message},
     type: MESSAGES_MARK_READ_REQUEST,
-    payload: { message }
-  }
+  };
 }
 
-export function messageMarkReadSuccess() {
-  return { type: MESSAGES_MARK_READ_SUCCESS }
+export function messageMarkReadSuccess(payload) {
+  return {payload, type: MESSAGES_MARK_READ_SUCCESS};
 }
 
 export function messageMarkReadFail(error) {
-  return { type: MESSAGES_MARK_READ_FAIL, error }
+  return {error, type: MESSAGES_MARK_READ_FAIL};
 }
 
 export function messageSend(message) {
-  return { type: MESSAGES_SEND_REQUEST, payload: message }
+  return {payload: message, type: MESSAGES_SEND_REQUEST};
 }
 
 export function messageSendSuccess() {
-  return { type: MESSAGES_SEND_SUCCESS }
+  return {type: MESSAGES_SEND_SUCCESS};
 }
 
 export function messageSendFail(error) {
-  return { type: MESSAGES_SEND_FAIL, error }
+  return {error, type: MESSAGES_SEND_FAIL};
 }
 
 export function messageSystemSend(message) {
-  return { type: MESSAGES_SYSTEM_SEND_REQUEST, payload: message }
+  return {payload: message, type: MESSAGES_SYSTEM_SEND_REQUEST};
 }
 
 export function messageSystemSendSuccess() {
-  return { type: MESSAGES_SYSTEM_SEND_SUCCESS }
+  return {type: MESSAGES_SYSTEM_SEND_SUCCESS};
 }
 
 export function messageSystemSendFail(error) {
-  return { type: MESSAGES_SYSTEM_SEND_FAIL, error }
+  return {error, type: MESSAGES_SYSTEM_SEND_FAIL};
 }

@@ -7,6 +7,7 @@ QuickBlox application includes everything that brings messaging right into your 
 3. Configure the app. Type in the information about your organization into corresponding fields and click **Add** button.
 4. Go to **Dashboard** => **_YOUR_APP_** => **Overview** section and copy your **Application ID**, **Authorization Key**, **Authorization Secret**, and **Account Key**.
 
+
 ### Run Chat sample
 
 1. Install [Node.js](https://nodejs.org) and [npm](https://www.npmjs.com/get-npm) if you don’t have it.

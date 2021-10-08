@@ -1,4 +1,4 @@
-import QB from 'quickblox-react-native-sdk'
+import QB from 'quickblox-react-native-sdk';
 
 import {
   AUTH_LOGOUT_SUCCESS,
@@ -9,119 +9,138 @@ import {
   MESSAGES_SEND_FAIL,
   MESSAGES_SEND_REQUEST,
   MESSAGES_SEND_SUCCESS,
-  FILE_UPLOAD_REQUEST,
-  FILE_UPLOAD_SUCCESS,
-  FILE_UPLOAD_FAIL,
-} from '../constants'
+  MESSAGES_SYSTEM_SEND_FAIL,
+  MESSAGES_MARK_READ_SUCCESS,
+  MESSAGES_SYSTEM_SEND_REQUEST,
+  MESSAGES_SYSTEM_SEND_SUCCESS,
+} from '../constants';
 
 const initialState = {
   error: undefined,
   loading: false,
-  messages: {},
+  messages: {
+    allIds: [],
+    byDialogId: {},
+    byId: {},
+  },
   sending: false,
-}
+};
 
 export default (state = initialState, action) => {
-  let dialogMessages
-  let index = -1
   switch (action.type) {
     case MESSAGES_GET_REQUEST:
-      return { ...state, error: undefined, loading: true }
+      return {...state, error: undefined, loading: true};
     case MESSAGES_GET_SUCCESS: {
-      const messages = Object.assign({}, state.messages)
+      const messages = Object.assign({}, state.messages);
+      const idsSet = new Set(messages.allIds);
       action.payload.messages.forEach((message, i) => {
-        if (!messages[message.dialogId]) {
-          messages[message.dialogId] = []
+        idsSet.add(message.id);
+        messages.byId[message.id] = message;
+        if (!messages.byDialogId[message.dialogId]) {
+          messages.byDialogId[message.dialogId] = {};
         }
-        index = messages[message.dialogId].findIndex(msg =>
-          msg.id === message.id
-        )
-        if (index > -1) {
-          messages[message.dialogId].splice(index, 1, message)
-        } else {
-          messages[message.dialogId].push(message)
-        }
+        messages.byDialogId[message.dialogId][message.id] = message;
         if (i === action.payload.messages.length - 1) {
-          messages[message.dialogId].hasMore = action.payload.hasMore
+          messages.byDialogId[message.dialogId].hasMore =
+            action.payload.hasMore;
         }
-      })
-      return { ...state, loading: false, messages }
+      });
+      messages.allIds = Array.from(idsSet);
+      return {...state, loading: false, messages};
     }
     case MESSAGES_GET_FAIL:
-      return { ...state, error: action.error, loading: false }
+      return {...state, error: action.error, loading: false};
     case DIALOGS_LEAVE_SUCCESS: {
-      const messages = { ...state.messages }
-      messages[action.payload] = []
-      return { ...state, messages }
+      const messages = Object.assign({}, state.messages);
+      const idsSet = new Set(messages.allIds);
+      const dialogId = action.payload;
+      if (messages.byDialogId[dialogId]) {
+        const messagesIdsForDialog = Object.keys(messages.byDialogId).filter(
+          id => id !== 'hasMore',
+        );
+        messagesIdsForDialog.forEach(messageId => {
+          idsSet.delete(messageId);
+          delete messages.byId[messageId];
+        });
+        delete messages.byDialogId[dialogId];
+        messages.allIds = Array.from(idsSet);
+      }
+      return {...state, messages};
     }
     case MESSAGES_SEND_REQUEST:
-      return { ...state, error: undefined, sending: true }
+    case MESSAGES_SYSTEM_SEND_REQUEST:
+      return {...state, error: undefined, sending: true};
     case MESSAGES_SEND_SUCCESS:
-      return { ...state, sending: false }
+    case MESSAGES_SYSTEM_SEND_SUCCESS:
+      return {...state, sending: false};
     case MESSAGES_SEND_FAIL:
-      return { ...state, error: action.error, sending: false }
+    case MESSAGES_SYSTEM_SEND_FAIL:
+      return {...state, error: action.error, sending: false};
     case QB.chat.EVENT_TYPE.RECEIVED_NEW_MESSAGE: {
-      dialogMessages = (state.messages[action.payload.dialogId] || []).slice()
-      index = dialogMessages.findIndex(message =>
-        message.id === action.payload.id
-      )
-      if (index === -1) {
-        dialogMessages.push(action.payload)
+      const messages = Object.assign({}, state.messages);
+      const idsSet = new Set(messages.allIds);
+      const message = action.payload;
+      messages.byId[message.id] = message;
+      if (!messages.byDialogId[message.dialogId]) {
+        messages.byDialogId[message.dialogId] = {};
       }
-      return {
-        ...state,
-        messages: {
-          ...state.messages,
-          [action.payload.dialogId]: dialogMessages
-        }
-      }
+      messages.byDialogId[message.dialogId][message.id] = message;
+      idsSet.add(message.id);
+      messages.allIds = Array.from(idsSet);
+      return {...state, messages};
     }
     case QB.chat.EVENT_TYPE.MESSAGE_DELIVERED: {
-      dialogMessages = (state.messages[action.payload.dialogId] || []).slice()
-      index = dialogMessages.findIndex(message =>
-        message.id === action.payload.messageId
-      )
-      if (index > -1) {
-        if (!dialogMessages[index].deliveredIds) {
-          dialogMessages[index].deliveredIds = []
-        }
-        dialogMessages[index].deliveredIds.push(action.payload.userId)
-      }
-      return {
-        ...state,
-        messages: {
-          ...state.messages,
-          [action.payload.dialogId]: dialogMessages
-        }
-      }
-    }
-    case QB.chat.EVENT_TYPE.MESSAGE_READ: {
-      dialogMessages = (state.messages[action.payload.dialogId] || []).slice()
-      index = dialogMessages.findIndex(message =>
-        message.id === action.payload.messageId
-      )
-      if (index > -1) {
-        if (!dialogMessages[index].readIds) {
-          dialogMessages[index].readIds = []
-        }
-        dialogMessages[index].readIds.push(action.payload.userId)
-        if (!dialogMessages[index].deliveredIds) {
-          dialogMessages[index].deliveredIds = [action.payload.userId]
-        } else {
-          if (dialogMessages[index].deliveredIds.indexOf(action.payload.userId) === -1) {
-            dialogMessages[index].deliveredIds.push(action.payload.userId)
+      const byDialogId = {...state.messages.byDialogId};
+      const {dialogId, messageId, userId} = action.payload;
+      if (dialogId in byDialogId) {
+        let message = {...byDialogId[dialogId][messageId]};
+        if (Array.isArray(message.deliveredIds)) {
+          if (!message.deliveredIds.includes(userId)) {
+            message = {
+              ...message,
+              deliveredIds: message.deliveredIds.concat(userId),
+            };
           }
+        } else {
+          message = {...message, deliveredIds: [userId]};
         }
+        byDialogId[dialogId][messageId] = message;
       }
-      return {
-        ...state,
-        messages: {
-          ...state.messages,
-          [action.payload.dialogId]: dialogMessages
-        }
-      }
+      return {...state, messages: {...state.messages, byDialogId}};
     }
-    case AUTH_LOGOUT_SUCCESS: return initialState
-    default: return state
+    case MESSAGES_MARK_READ_SUCCESS:
+    case QB.chat.EVENT_TYPE.MESSAGE_READ: {
+      const byDialogId = {...state.messages.byDialogId};
+      const {dialogId, messageId, userId} = action.payload;
+      if (dialogId in byDialogId) {
+        let message = {...byDialogId[dialogId][messageId]};
+        if (Array.isArray(message.readIds)) {
+          if (!message.readIds.includes(userId)) {
+            message = {
+              ...message,
+              readIds: message.readIds.concat(userId),
+            };
+          }
+        } else {
+          message = {...message, readIds: [userId]};
+        }
+        if (Array.isArray(message.deliveredIds)) {
+          if (!message.deliveredIds.includes(userId)) {
+            message = {
+              ...message,
+              deliveredIds: message.deliveredIds.concat(userId),
+            };
+          }
+        } else {
+          message = {...message, deliveredIds: [userId]};
+        }
+        byDialogId[dialogId][messageId] = message;
+      }
+      return {...state, messages: {...state.messages, byDialogId}};
+    }
+    case AUTH_LOGOUT_SUCCESS:
+      return initialState;
+    default:
+      return state;
   }
-}
+};

@@ -1,8 +1,8 @@
 export default {
+  accountKey: '',
+  apiEndpoint: '',
   appId: '',
   authKey: '',
   authSecret: '',
-  accountKey: '',
-  apiEndpoint: '',
   chatEndpoint: '',
-}
+};

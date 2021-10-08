@@ -1,30 +1,19 @@
-import { StyleSheet } from 'react-native'
+import {StyleSheet} from 'react-native';
 
-import { colors } from '../../theme'
+import {colors} from '../../theme';
 
 export default StyleSheet.create({
-  safeArea: {
-    backgroundColor: colors.primary,
+  containerView: {
     flex: 1,
     width: '100%',
   },
-  titleView: {
+  dialogCircle: {
     alignItems: 'center',
-    alignSelf: 'center',
+    borderRadius: 14,
+    height: 28,
     justifyContent: 'center',
-    width: '100%',
-  },
-  titleText: {
-    color: colors.white,
-    fontSize: 17,
-    fontWeight: 'bold',
-    lineHeight: 20,
-  },
-  titleSmallText: {
-    color: colors.white,
-    fontSize: 13,
-    lineHeight: 15,
-    opacity: 0.6,
+    marginRight: 10,
+    width: 28,
   },
   headerButton: {
     alignItems: 'center',
@@ -37,4 +26,162 @@ export default StyleSheet.create({
     fontSize: 17,
     lineHeight: 20,
   },
-})
+  keyboardView: {
+    backgroundColor: colors.lightGray,
+    flex: 1,
+    width: '100%',
+  },
+  list: {
+    backgroundColor: colors.whiteBackground,
+    flex: 1,
+    width: '100%',
+  },
+  messageInputAttachmentPreviewContainer: {
+    backgroundColor: colors.white,
+    borderBottomWidth: 1,
+    borderColor: colors.inputShadow,
+    borderTopWidth: 1,
+    elevation: 8,
+    flexDirection: 'row',
+    padding: 8,
+    shadowColor: colors.inputShadow,
+    shadowOffset: {height: -4, width: 0},
+    shadowOpacity: 0.5,
+    shadowRadius: 4,
+    width: '100%',
+  },
+  messageInputAttachmentPreviewImage: {
+    height: 80,
+    minWidth: 80,
+    resizeMode: 'contain',
+  },
+  messageInputAttachmentPreviewItem: {
+    alignItems: 'center',
+    height: 80,
+    justifyContent: 'center',
+    minWidth: 80,
+    position: 'relative',
+  },
+  messageInputBackdrop: {
+    ...StyleSheet.absoluteFillObject,
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.4)',
+    height: '100%',
+    justifyContent: 'center',
+    width: '100%',
+  },
+  messageInputBackdropTopRight: {
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.4)',
+    height: 30,
+    justifyContent: 'center',
+    position: 'absolute',
+    right: 0,
+    top: 0,
+    width: 30,
+  },
+  messageInputClearAttachment: {
+    color: colors.white,
+    fontSize: 32,
+    lineHeight: 32,
+    textAlign: 'center',
+  },
+  messageInputField: {
+    flex: 1,
+    fontSize: 15,
+    lineHeight: 18,
+    maxHeight: 18 * 3 + 5 * 2, // lineHeight * numberOfLines + padding * 2
+    padding: 5,
+    textAlignVertical: 'center',
+  },
+  messageInputFieldView: {
+    backgroundColor: colors.white,
+    elevation: 8,
+    flexDirection: 'row',
+    shadowColor: colors.inputShadow,
+    shadowOffset: {height: -4, width: 0},
+    shadowOpacity: 0.5,
+    shadowRadius: 4,
+    width: '100%',
+  },
+  messageInputSendButton: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 6,
+  },
+  messageInputSendButtonIcon: {
+    height: 30,
+    resizeMode: 'contain',
+    width: 30,
+  },
+  messagesList: {
+    backgroundColor: colors.whiteBackground,
+    flex: 1,
+    paddingHorizontal: 10,
+    width: '100%',
+  },
+  messagesListEmptyText: {
+    color: colors.label,
+    fontSize: 15,
+    lineHeight: 18,
+    textAlign: 'center',
+  },
+  messagesListEmptyView: {
+    alignSelf: 'center',
+    transform: [{scaleY: -1}],
+  },
+  messagesListSectionHeaderText: {
+    color: colors.gray,
+    fontSize: 12,
+    lineHeight: 15,
+    textAlign: 'center',
+  },
+  messagesListSectionHeaderTextView: {
+    alignItems: 'center',
+    backgroundColor: colors.greyedBlue,
+    borderRadius: 11,
+    height: 20,
+    justifyContent: 'center',
+    marginBottom: 5,
+    marginTop: 5,
+    paddingHorizontal: 10,
+  },
+  messagesListSectionHeaderView: {
+    alignItems: 'center',
+    backgroundColor: colors.transparent,
+    justifyContent: 'center',
+  },
+  titleNormalText: {
+    color: colors.white,
+    fontSize: 16,
+    fontWeight: 'normal',
+    lineHeight: 20,
+  },
+  titleRowView: {
+    alignItems: 'center',
+    alignSelf: 'center',
+    flexDirection: 'row',
+    justifyContent: 'center',
+    paddingHorizontal: 25,
+  },
+  titleSmallText: {
+    color: colors.white,
+    fontSize: 13,
+    lineHeight: 15,
+    opacity: 0.6,
+  },
+  titleText: {
+    color: colors.white,
+    fontSize: 17,
+    fontWeight: 'bold',
+    lineHeight: 20,
+  },
+  titleView: {
+    alignItems: 'center',
+    alignSelf: 'center',
+    justifyContent: 'center',
+  },
+  typingIndicator: {
+    padding: 10,
+  },
+});

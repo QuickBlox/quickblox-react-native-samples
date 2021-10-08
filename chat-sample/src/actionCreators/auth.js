@@ -8,40 +8,40 @@ import {
   AUTH_LOGOUT_FAIL,
   AUTH_LOGOUT_REQUEST,
   AUTH_LOGOUT_SUCCESS,
-} from '../constants'
+} from '../constants';
 
 export function sessionGet() {
-  return { type: AUTH_GET_SESSION_REQUEST }
+  return {type: AUTH_GET_SESSION_REQUEST};
 }
 
 export function sessionGetSuccess(session) {
-  return { type: AUTH_GET_SESSION_SUCCESS, payload: session }
+  return {payload: session, type: AUTH_GET_SESSION_SUCCESS};
 }
 
 export function sessionGetFail(error) {
-  return { type: AUTH_GET_SESSION_FAIL, error }
+  return {error, type: AUTH_GET_SESSION_FAIL};
 }
 
 export function loginRequest(payload) {
-  return { type: AUTH_LOGIN_REQUEST, payload }
+  return {payload, type: AUTH_LOGIN_REQUEST};
 }
 
-export function loginSuccess({ session, user }) {
-  return { type: AUTH_LOGIN_SUCCESS, payload: { session, user } }
+export function loginSuccess({session, user}) {
+  return {payload: {session, user}, type: AUTH_LOGIN_SUCCESS};
 }
 
 export function loginFail(error) {
-  return { type: AUTH_LOGIN_FAIL, error }
+  return {error, type: AUTH_LOGIN_FAIL};
 }
 
 export function logoutRequest() {
-  return { type: AUTH_LOGOUT_REQUEST }
+  return {type: AUTH_LOGOUT_REQUEST};
 }
 
 export function logoutSuccess() {
-  return { type: AUTH_LOGOUT_SUCCESS }
+  return {type: AUTH_LOGOUT_SUCCESS};
 }
 
 export function logoutFail(error) {
-  return { type: AUTH_LOGOUT_FAIL, error }
+  return {error, type: AUTH_LOGOUT_FAIL};
 }

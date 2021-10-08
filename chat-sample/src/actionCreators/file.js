@@ -12,56 +12,56 @@ import {
   FILE_UPLOAD_FAIL,
   FILE_UPLOAD_REQUEST,
   FILE_UPLOAD_SUCCESS,
-} from '../constants'
+} from '../constants';
 
 export function fileGetInfo(id) {
-  return { type: FILE_GET_INFO_REQUEST, payload: id }
+  return {payload: id, type: FILE_GET_INFO_REQUEST};
 }
 
 export function fileGetInfoSuccess(info) {
-  return { type: FILE_GET_INFO_SUCCESS, payload: info }
+  return {payload: info, type: FILE_GET_INFO_SUCCESS};
 }
 
 export function fileGetInfoFail(error) {
-  return { type: FILE_GET_INFO_FAIL, error }
+  return {error, type: FILE_GET_INFO_FAIL};
 }
 
 export function fileUpload(payload) {
-  return { type: FILE_UPLOAD_REQUEST, payload }
+  return {payload, type: FILE_UPLOAD_REQUEST};
 }
 
 export function fileUploadSucess(file) {
-  return { type: FILE_UPLOAD_SUCCESS, payload: file }
+  return {payload: file, type: FILE_UPLOAD_SUCCESS};
 }
 
 export function fileUploadFail(error) {
-  return { type: FILE_UPLOAD_FAIL, error }
+  return {error, type: FILE_UPLOAD_FAIL};
 }
 
 export function fileUploadCancel() {
-  return { type: FILE_UPLOAD_CANCEL }
+  return {type: FILE_UPLOAD_CANCEL};
 }
 
 export function privateUrlGet(uid) {
-  return { type: FILE_PRIVATE_URL_REQUEST, payload: uid }
+  return {payload: uid, type: FILE_PRIVATE_URL_REQUEST};
 }
 
 export function privateUrlGetSuccess(uid, url) {
-  return { type: FILE_PRIVATE_URL_SUCCESS, payload: { uid, url } }
+  return {payload: {uid, url}, type: FILE_PRIVATE_URL_SUCCESS};
 }
 
 export function privateUrlGetFail(error) {
-  return { type: FILE_PRIVATE_URL_FAIL, error }
+  return {error, type: FILE_PRIVATE_URL_FAIL};
 }
 
 export function publicUrlGet(uid) {
-  return { type: FILE_PUBLIC_URL_REQUEST, payload: uid }
+  return {payload: uid, type: FILE_PUBLIC_URL_REQUEST};
 }
 
 export function publicUrlGetSuccess(uid, url) {
-  return { type: FILE_PUBLIC_URL_SUCCESS, payload: { uid, url } }
+  return {payload: {uid, url}, type: FILE_PUBLIC_URL_SUCCESS};
 }
 
 export function publicUrlGetFail(error) {
-  return { type: FILE_PUBLIC_URL_FAIL, error }
+  return {error, type: FILE_PUBLIC_URL_FAIL};
 }

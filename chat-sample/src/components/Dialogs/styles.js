@@ -1,39 +1,17 @@
-import { StyleSheet } from 'react-native'
+import {StyleSheet} from 'react-native';
 
-import { colors } from '../../theme'
+import {colors} from '../../theme';
 
 export default StyleSheet.create({
-  titleView: {
+  checkboxView: {
     alignItems: 'center',
-    alignSelf: 'center',
+    flex: 1,
     justifyContent: 'center',
-    width: '100%',
   },
-  titleText: {
-    color: colors.white,
-    fontSize: 17,
-    fontWeight: 'bold',
-    lineHeight: 20,
-  },
-  titleSmallText: {
-    color: colors.white,
-    fontSize: 13,
-    lineHeight: 15,
-    opacity: 0.6,
-  },
-  headerButton: {
-    alignItems: 'center',
-    height: '100%',
-    justifyContent: 'center',
-    paddingHorizontal: 16,
-  },
-  headerButtonText: {
-    color: colors.white,
-    fontSize: 17,
-    lineHeight: 20,
-  },
-  dialogsList: {
+  createScreenContainerView: {
     backgroundColor: colors.whiteBackground,
+    flex: 1,
+    width: '100%',
   },
   dialogBtn: {
     flexDirection: 'row',
@@ -55,46 +33,80 @@ export default StyleSheet.create({
     fontSize: 17,
     lineHeight: 20,
   },
-  dialogName: {
-    color: colors.black,
-    fontSize: 17,
-    lineHeight: 20,
-  },
   dialogLastMessage: {
     color: colors.gray,
     fontSize: 15,
     lineHeight: 18,
-  },
-  dialogRightView: {
-    alignItems: 'flex-end',
-    justifyContent: 'flex-start',
-  },
-  checkboxView: {
-    alignItems: 'center',
-    flex: 1,
-    justifyContent: 'center',
   },
   dialogLastMessageDate: {
     color: colors.gray,
     fontSize: 12,
     lineHeight: 20,
   },
-  safeArea: {
-    backgroundColor: colors.primary,
+  dialogName: {
+    color: colors.black,
+    fontSize: 17,
+    lineHeight: 20,
+  },
+  dialogNameAndLastMessageContainer: {
     flex: 1,
-    width: '100%',
+    justifyContent: 'center',
+  },
+  dialogRightView: {
+    alignItems: 'flex-end',
+    justifyContent: 'flex-start',
+  },
+  dialogsList: {
+    backgroundColor: colors.whiteBackground,
+  },
+  headerButton: {
+    alignItems: 'center',
+    height: '100%',
+    justifyContent: 'center',
+    padding: 10,
+  },
+  headerButtonImage: {
+    height: 28,
+    resizeMode: 'center',
+    width: 28,
+  },
+  headerButtonText: {
+    color: colors.white,
+    fontSize: 17,
+    lineHeight: 20,
+  },
+  headerButtonsView: {
+    flexDirection: 'row',
+  },
+  titleSmallText: {
+    color: colors.white,
+    fontSize: 13,
+    lineHeight: 15,
+    opacity: 0.6,
+  },
+  titleText: {
+    color: colors.white,
+    fontSize: 17,
+    fontWeight: 'bold',
+    lineHeight: 20,
+    textAlign: 'center',
+  },
+  titleView: {
+    alignItems: 'center',
+    alignSelf: 'center',
+    justifyContent: 'center',
   },
   unreadMsgBadge: {
     alignItems: 'center',
     backgroundColor: colors.lightGreen,
-    borderRadius: 12,
-    height: 24,
+    borderRadius: 10,
+    height: 20,
     justifyContent: 'center',
-    width: 24,
+    width: 20,
   },
   unreadMsgText: {
     color: colors.white,
-    fontSize: 11,
+    fontSize: 10,
     textAlign: 'center',
   },
-})
+});

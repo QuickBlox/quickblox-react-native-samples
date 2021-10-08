@@ -1,20 +1,25 @@
 import {
   INIT_QB_REQUEST_FAIL,
   INIT_QB_REQUEST_SUCCESS,
-} from '../constants'
+  NETWORK_STATE_CHANGED,
+} from '../constants';
 
 const initialState = {
-  ready: undefined
-}
+  connected: false,
+  ready: undefined,
+};
 
 export default (state = initialState, action) => {
   switch (action.type) {
     case INIT_QB_REQUEST_SUCCESS: {
-      return { ...state, ready: true }
+      return {...state, ready: true};
     }
     case INIT_QB_REQUEST_FAIL: {
-      return { ...state, ready: false }
+      return {...state, ready: false};
     }
-    default: return state
+    case NETWORK_STATE_CHANGED:
+      return {...state, connected: action.payload};
+    default:
+      return state;
   }
-}
+};

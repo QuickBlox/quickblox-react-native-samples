@@ -12,56 +12,56 @@ import {
   USERS_UPDATE_FAIL,
   USERS_UPDATE_REQUEST,
   USERS_UPDATE_SUCCESS,
-} from '../constants'
+} from '../constants';
 
 export function usersCreate(data) {
-  return { type: USERS_CREATE_REQUEST, payload: data }
+  return {payload: data, type: USERS_CREATE_REQUEST};
 }
 
 export function usersCreateSuccess(user) {
-  return { type: USERS_CREATE_SUCCESS, payload: user }
+  return {payload: user, type: USERS_CREATE_SUCCESS};
 }
 
 export function usersCreateFail(error) {
-  return { type: USERS_CREATE_FAIL, error }
+  return {error, type: USERS_CREATE_FAIL};
 }
 
 export function usersGet(payload) {
-  return { type: USERS_GET_REQUEST, payload }
+  return {payload, type: USERS_GET_REQUEST};
 }
 
 export function usersGetSuccess(data) {
-  return { type: USERS_GET_SUCCESS, payload: data }
+  return {payload: data, type: USERS_GET_SUCCESS};
 }
 
 export function usersGetFail(error) {
-  return { type: USERS_GET_FAIL, error }
+  return {error, type: USERS_GET_FAIL};
 }
 
 export function usersUpdate(profile) {
-  return { type: USERS_UPDATE_REQUEST, payload: profile }
+  return {payload: profile, type: USERS_UPDATE_REQUEST};
 }
 
 export function usersUpdateSuccess(user) {
-  return { type: USERS_UPDATE_SUCCESS, payload: user }
+  return {payload: user, type: USERS_UPDATE_SUCCESS};
 }
 
 export function usersUpdateFail(error) {
-  return { type: USERS_UPDATE_FAIL, error }
+  return {error, type: USERS_UPDATE_FAIL};
 }
 
 export function usersSelect(userId) {
-  return { type: USERS_SELECT, payload: userId }
+  return {payload: userId, type: USERS_SELECT};
 }
 
 export function usersBulkSelect(userIds) {
-  return { type: USERS_BULK_SELECT, payload: userIds }
+  return {payload: userIds, type: USERS_BULK_SELECT};
 }
 
 export function usersSetFilter(filter) {
-  return { type: USERS_SET_FILTER, payload: filter }
+  return {payload: filter, type: USERS_SET_FILTER};
 }
 
 export function usersSetPage(page) {
-  return { type: USERS_SET_PAGE, payload: page }
+  return {payload: page, type: USERS_SET_PAGE};
 }
