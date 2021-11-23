@@ -1,3 +1,19 @@
+This is a code sample for [QuickBlox](https://quickblox.com) platform. It is a great way for developers using [QuickBlox](https://quickblox.com) platform to learn how to integrate private and group chat, add text and image attachments sending into your application.
+
+### Features:
+* Login/logout
+* Send and receive message/attachment
+* Create and leave a 1-to-1 and group chat
+* Create a public chat
+* Display users who have received/read the message
+* Mark messages as read/delivered
+* Send typing indicators
+* List and delete chats
+* Display chat history
+* Display a list with chat participants
+* Receive push notifications
+* Subscribe/unsubscribe device to push notifications
+
 ### Get application credentials
 
 QuickBlox application includes everything that brings messaging right into your application - chat, video calling, users, push notifications, etc. To create a QuickBlox application, follow the steps below:
@@ -10,20 +26,22 @@ QuickBlox application includes everything that brings messaging right into your 
 
 ### Run Chat sample
 
-1. Install [Node.js](https://nodejs.org) and [npm](https://www.npmjs.com/get-npm) if you don’t have it.
-2. Install [CocoaPods](https://guides.cocoapods.org/using/getting-started.html) (for iOS project only) if you don’t have it.
-3. Setup the [React Native environment](https://reactnative.dev/docs/environment-setup) if you don’t have it.
-4. Clone repository with the sample.
-5. Open a terminal and enter the commands below in your project path.
+1. Setup the [React Native environment](https://reactnative.dev/docs/environment-setup).
+2. Clone repository with the sample.
+3. Open a terminal and enter the commands below in your project path.
 ```bash
 npm install
 ```
-extra step for iOS
+4. Extra steps for iOS: in file `ios/Podfile` change `platform` to `12`
+```
+platform :ios, '12.0'
+```
+then in terminal run
 ```bash
 cd ios
 pod install
 ```
-6. Get **appId**, **authKey**, **authSecret**, **accountKey** from your app and put these values in `src/QBConfig.js` file .
+5. Get **appId**, **authKey**, **authSecret**, **accountKey** from your app and put these values in `src/QBConfig.js` file .
 ```javascript
 export default {
   appId: xxxxxxx,
@@ -34,22 +52,7 @@ export default {
   chatEndpoint: '',
 }
 ```
-8. Run the code sample.  
-`react-native run-android` OR `react-native run-ios`  
+6. Run the code sample.  
+`npm run android` OR `npm run ios`  
 
-**NOTE**: in order to receive push notifications you should make following changes:  
-### Android
-1. Set up push notifications as described in [Android Push Notifications guide](https://docs.quickblox.com/docs/android-push-notifications)
-2. Put `google-services.json` to your app (in `android/app` folder)
-3. Uncomment following code:  
-​
-`android/app/build.gradle`
-```
-// apply plugin: 'com.google.gms.google-services'
-```
-`src/NotificationService.js`
-```
-// import gServices from '../android/app/google-services.json'
-```
-### iOS
-Configure push notifications as described in [iOS Push notifications guide](https://docs.quickblox.com/docs/ios-push-notifications)
+**NOTE**: in order to receive push notifications you should make changes as described in [documentation](https://docs.quickblox.com/docs/react-native-push-notifications#configuration)

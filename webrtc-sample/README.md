@@ -1,3 +1,16 @@
+This is a code sample for [QuickBlox](http://quickblox.com) platform. It is a great way for developers using [QuickBlox](http://quickblox.com) platform to learn how to integrate audio and video calling features into your application.
+
+### Features
+* Login/logout
+* Make and receive 1-to-1 and group audio call
+* Make and receive 1-to-1 and group video call
+* Search for users to make a call with
+* Mute/unmute the microphone
+* Display a list of call participants and their statuses
+* Switch speaker
+* Switch camera
+* Mirror local video
+
 ### Get application credentials
 
 QuickBlox application includes everything that brings messaging right into your application - chat, video calling, users, push notifications, etc. To create a QuickBlox application, follow the steps below:
@@ -10,20 +23,22 @@ QuickBlox application includes everything that brings messaging right into your 
 
 ### Run Video Calling sample
 
-1. Install [Node.js](https://nodejs.org) and [npm](https://www.npmjs.com/get-npm) if you don’t have it.
-2. Install [CocoaPods](https://guides.cocoapods.org/using/getting-started.html) (for iOS project only) if you don’t have it.
-3. Setup the [React Native environment](https://reactnative.dev/docs/environment-setup) if you don’t have it.
-4. Clone repository with the sample.
-5. Open a terminal and enter the commands below in your project path.
+1. Setup the [React Native environment](https://reactnative.dev/docs/environment-setup).
+2. Clone repository with the sample.
+3. Open a terminal and enter the commands below in your project path.
 ```bash
 npm install
 ```
-extra step for iOS
+4. Extra steps for iOS: in file `ios/Podfile` change `platform` to `12`
+```
+platform :ios, '12.0'
+```
+then in terminal run
 ```bash
 cd ios
 pod install
 ```
-6. Get **appId**, **authKey**, **authSecret**, **accountKey** from your app and put these values in `src/QBConfig.js` file .
+5. Get **appId**, **authKey**, **authSecret**, **accountKey** from your app and put these values in `src/QBConfig.js` file .
 ```javascript
 export default {
   appId: xxxxxxx,
@@ -34,7 +49,7 @@ export default {
   chatEndpoint: '',
 }
 ```
-7. Run the code sample.  
+6. Run the code sample.  
 `react-native run-android` OR `react-native run-ios`  
 
 Please note, processing of incoming calls in the background is not implemented in this sample. This functionality will be developed later, meanwhile, you can implement it in your way.
