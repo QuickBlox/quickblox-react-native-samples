@@ -16,6 +16,7 @@ export default StyleSheet.create({
     width: 28,
   },
   headerButton: {
+    color: colors.white,
     alignItems: 'center',
     height: '100%',
     justifyContent: 'center',
@@ -53,7 +54,8 @@ export default StyleSheet.create({
   messageInputAttachmentPreviewImage: {
     height: 80,
     minWidth: 80,
-    resizeMode: 'contain',
+    resizeMode: 'cover',
+    borderRadius: 8,
   },
   messageInputAttachmentPreviewItem: {
     alignItems: 'center',
@@ -69,10 +71,11 @@ export default StyleSheet.create({
     height: '100%',
     justifyContent: 'center',
     width: '100%',
+    borderRadius: 8,
   },
   messageInputBackdropTopRight: {
     alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.4)',
+    backgroundColor: 'rgba(0, 0, 0, 0.1)',
     height: 30,
     justifyContent: 'center',
     position: 'absolute',
@@ -87,6 +90,7 @@ export default StyleSheet.create({
     textAlign: 'center',
   },
   messageInputField: {
+    color: colors.black,
     flex: 1,
     fontSize: 15,
     lineHeight: 18,
@@ -105,11 +109,13 @@ export default StyleSheet.create({
     width: '100%',
   },
   messageInputSendButton: {
+    tintColor: colors.primary,
     alignItems: 'center',
     justifyContent: 'center',
     padding: 6,
   },
   messageInputSendButtonIcon: {
+    tintColor: colors.primary,
     height: 30,
     resizeMode: 'contain',
     width: 30,

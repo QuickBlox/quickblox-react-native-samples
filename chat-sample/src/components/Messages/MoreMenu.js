@@ -49,6 +49,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
   },
   moreBtnIcon: {
+    tintColor: colors.white,
     height: 28,
     width: 28,
   },
@@ -127,6 +128,7 @@ function MoreMenu(props) {
     },
   ];
   const showInfoBtn = dialogType === QB.chat.DIALOG_TYPE.GROUP_CHAT;
+  const isPrivateChat = dialogType === QB.chat.DIALOG_TYPE.CHAT;
   return (
     <React.Fragment>
       <Pressable onPress={showMenu} ref={buttonRef} style={styles.moreBtn}>
@@ -149,7 +151,9 @@ function MoreMenu(props) {
               </Pressable>
             ) : null}
             <Pressable onPress={leavePressHandler} style={styles.menuItemBtn}>
-              <Text style={styles.menuItemText}>Leave Chat</Text>
+              <Text style={styles.menuItemText}>
+                {isPrivateChat ? 'Delete' : 'Leave'} Chat
+              </Text>
             </Pressable>
           </Animated.View>
         </View>

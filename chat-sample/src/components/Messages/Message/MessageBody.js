@@ -83,19 +83,23 @@ function MessageBody(props) {
     );
   };
 
-  const Content = React.useCallback(() => {
-    if (withAttachment) {
-      return (
-        <Attachment
-          key={attachmentId}
-          attachmentType={attachmentType}
-          attachmentUrl={attachmentUrl}
-        />
-      );
-    } else {
-      return null;
-    }
-  }, [attachmentId, attachmentType, attachmentUrl, withAttachment]);
+  const Content = React.useCallback(
+    ({onLongPress}) => {
+      if (withAttachment) {
+        return (
+          <Attachment
+            attachmentType={attachmentType}
+            attachmentUrl={attachmentUrl}
+            key={attachmentId}
+            onLongPress={onLongPress}
+          />
+        );
+      } else {
+        return null;
+      }
+    },
+    [attachmentId, attachmentType, attachmentUrl, withAttachment],
+  );
 
   return (
     <View style={_styles.bodyView}>

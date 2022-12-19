@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect, useMemo, memo, useState} from 'react';
 import {StyleSheet, Text} from 'react-native';
 import {useSelector} from 'react-redux';
 import {createStructuredSelector} from 'reselect';
@@ -6,10 +6,10 @@ import QB from 'quickblox-react-native-sdk';
 
 import {
   authUserSelector,
-  dialogsItemsSelector,
+  dialogsTypingSelector,
   usersItemsSelector,
 } from '../selectors';
-import {usersGet} from '../actionCreators';
+import {usersGet, dialogUpdateTypingStatus} from '../actionCreators';
 import {useActions} from '../hooks';
 import {colors} from '../theme';
 
@@ -24,13 +24,14 @@ const styles = StyleSheet.create({
 });
 
 const selector = createStructuredSelector({
-  dialogs: dialogsItemsSelector,
-  user: authUserSelector,
+  dialogTyping: dialogsTypingSelector,
+  currentUser: authUserSelector,
   users: usersItemsSelector,
 });
 
 const actions = {
   loadUsers: usersGet,
+  dialogStoppedTypingUser: dialogUpdateTypingStatus,
 };
 
 function getTyping(typingUsersIds, users, currentUser) {
@@ -41,7 +42,7 @@ function getTyping(typingUsersIds, users, currentUser) {
     const userNames = typingUsersIds
       .filter(userId => userId !== currentUser.id)
       .map(userId => {
-        const user = users.find(({id}) => id === userId);
+        const user = users.find(({ id }) => id === parseInt(userId, 10));
         return user ? user.fullName || user.login : undefined;
       })
       .filter(value => value);
@@ -55,9 +56,8 @@ function getTyping(typingUsersIds, users, currentUser) {
       case 3:
         return `${userNames[0]}, ${userNames[1]} and ${userNames[2]} are typing...`;
       default:
-        return `${userNames[0]}, ${userNames[1]} and ${
-          userNames.length - 2
-        } more are typing...`;
+        return `${userNames[0]}, ${userNames[1]} and ${userNames.length - 2
+          } more are typing...`;
     }
   } else {
     return '';
@@ -65,19 +65,58 @@ function getTyping(typingUsersIds, users, currentUser) {
 }
 
 function TypingIndicator(props) {
-  const {dialogId, style} = props;
-  const {dialogs, user, users} = useSelector(selector);
-  const {loadUsers} = useActions(actions);
+  const { dialogId, style } = props;
+  const { loadUsers, dialogStoppedTypingUser } = useActions(actions);
+  const { dialogTyping, currentUser, users } = useSelector(state =>
+    selector(state, props),
+  );
+  const [timers, setTimers] = useState({});
 
-  const typingUsersIds = React.useMemo(() => {
-    const dialog = dialogs.find(({id}) => id === dialogId);
-    return dialog && dialog.typing ? dialog.typing : [];
-  }, [dialogId, dialogs]);
+  const typingUsersIds = useMemo(() => {
+    const arrayOfUserIds = Object.keys(timers);
+    return arrayOfUserIds;
+  }, [timers]);
 
-  React.useEffect(() => {
+  useEffect(() => {
+    setTimers((prevTimers) => {
+      const timers = { ...prevTimers };
+
+      if (!dialogTyping) {
+        const timerList = Object.values(timers);
+        if (timerList.length) {
+          timerList.forEach(clearTimeout);
+        }
+        return {};
+      }
+
+      const typingUserId = dialogTyping.userId.toString();
+      const isTyping = dialogTyping.isTyping;
+
+      if (timers[typingUserId]) {
+        const removedTimer = timers[typingUserId];
+        clearTimeout(removedTimer);
+        delete timers[typingUserId];
+      }
+
+      if (isTyping === true) {
+        const timerId = setTimeout(() => {
+          const params = {
+            dialogId: dialogId,
+            userId: typingUserId,
+            isTyping: false,
+          }
+          dialogStoppedTypingUser(params);
+        }, 6000);
+        timers[typingUserId] = timerId;
+      }
+      return timers;
+    });
+  }, [dialogId, dialogTyping]);
+
+  useEffect(() => {
     const missingUserIds = typingUsersIds.filter(
       userId =>
-        userId !== user.id && users.findIndex(({id}) => id === userId) === -1,
+        userId !== currentUser.id && !users.some(id => id === parseInt(userId, 10)),
     );
     if (missingUserIds.length) {
       loadUsers({
@@ -90,13 +129,13 @@ function TypingIndicator(props) {
         page: 1,
       });
     }
-  }, [loadUsers, typingUsersIds, user, users]);
+  }, [loadUsers, typingUsersIds, currentUser, users]);
 
   return (
     <Text style={[styles.typingText, style]}>
-      {getTyping(typingUsersIds, users, user)}
+      {getTyping(typingUsersIds, users, currentUser)}
     </Text>
   );
 }
 
-export default React.memo(TypingIndicator);
+export default memo(TypingIndicator);

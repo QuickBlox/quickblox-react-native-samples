@@ -1,4 +1,4 @@
-import {call, put, select, takeEvery} from 'redux-saga/effects';
+import {call, put, select, takeEvery, takeLatest, takeLeading} from 'redux-saga/effects';
 import QB from 'quickblox-react-native-sdk';
 
 import {
@@ -86,7 +86,7 @@ export function* getMessages(action = {}) {
 }
 
 export function* sendMessage(action = {}) {
-  const {resolve, reject, ...message} = action.payload;
+  const { resolve, reject, ...message } = action.payload;
   try {
     yield call(QB.chat.sendMessage, {
       ...message,

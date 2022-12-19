@@ -18,6 +18,12 @@ import {useActions} from '../../../hooks';
 import {colors} from '../../../theme';
 import styles from './styles';
 
+import {
+  NOTIFICATION_TYPE_CREATED,
+  NOTIFICATION_TYPE_ADDED,
+  NOTIFICATION_TYPE_LEAVE,
+} from '../../../constants';
+
 const selector = createSelector(
   authUserSelector,
   contentFileUrlForMessageOwnPropsSelector,
@@ -140,6 +146,7 @@ function Message(props) {
             message={message}
             messageIsMine={true}
             withAttachment={hasAttachment.current}
+            dialogType={dialogType}
           />
           <MessageBody
             attachmentId={attachmentId.current}
@@ -166,8 +173,11 @@ function Message(props) {
     showViewed,
   ]);
 
-  const {body, properties = {}} = message;
-  if (['1', '2', '3'].indexOf(properties.notification_type) > -1) {
+  const { body, properties = {} } = message;
+
+  const allNotify = [NOTIFICATION_TYPE_CREATED, NOTIFICATION_TYPE_ADDED, NOTIFICATION_TYPE_LEAVE];
+  const haveNotificationType = allNotify.includes(properties.notification_type);
+  if (haveNotificationType) {
     return (
       <View style={styles.messageView}>
         <View style={styles.systemMessage}>
@@ -176,6 +186,7 @@ function Message(props) {
       </View>
     );
   }
+
   if (currentUser && message.senderId === currentUser.id) {
     return getMyMessage();
   } else {

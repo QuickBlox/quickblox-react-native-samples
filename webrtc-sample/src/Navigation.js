@@ -1,38 +1,49 @@
-import { createAppContainer, createSwitchNavigator } from 'react-navigation'
-import { createStackNavigator } from 'react-navigation-stack'
+import React from 'react';
+import {NavigationContainer} from '@react-navigation/native';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
 
-import CheckAuth from './containers/CheckAuth'
-import Login from './containers/Auth/Login'
-import CheckConnection from './containers/CheckConnection'
-import Users from './containers/Users'
-import CallScreen from './containers/CallScreen'
-import Info from './containers/Info'
-import { navigationHeader } from './theme'
+import Login from './components/Auth/Login';
+import Users from './components/Users';
+import CallScreen from './components/CallScreen';
+import Info from './components/Info';
+import SplashScreen from './components/SplashScreen';
+import {navigationHeader} from './theme';
 
-const AppNavigator = createSwitchNavigator({
-  CheckAuth,
-  Auth: createStackNavigator({
-    Login,
-    Info,
-  }, {
-    initialRouteName: 'Login',
-    defaultNavigationOptions: navigationHeader,
-  }),
-  WebRTC: createSwitchNavigator({
-    CheckConnection,
-    CallScreen,
-    Main: createStackNavigator({
-      Users,
-      Info,
-    }, {
-      initialRouteName: 'Users',
-      defaultNavigationOptions: navigationHeader,
-    })
-  }, {
-    initialRouteName: 'CheckConnection'
-  })
-}, {
-  initialRouteName: 'CheckAuth'
-})
+const INIT_FAILED_MSG =
+  'SDK initialization failed.\nCheck if your config is valid.';
 
-export default createAppContainer(AppNavigator)
+const Stack = createNativeStackNavigator();
+
+const AuthScreens = () => (
+  <>
+    <Stack.Screen name="Login" component={Login} />
+    <Stack.Screen name="Info" component={Info} />
+  </>
+);
+
+const LoggedInScreens = (call) => call ? (
+  <Stack.Screen
+    name="CallScreen"
+    component={CallScreen}
+    options={{headerShown: false}}
+  />
+) : (
+  <>
+    <Stack.Screen name="Users" component={Users} />
+    <Stack.Screen name="Info" component={Info} />
+  </>
+);
+
+export default props => (
+  props.appReady ? (
+    <NavigationContainer>
+      <Stack.Navigator screenOptions={navigationHeader}>
+        {props.loggedIn ? LoggedInScreens(props.call) : AuthScreens()}
+      </Stack.Navigator>
+    </NavigationContainer>
+  ) : (
+    <SplashScreen
+      message={props.appReady === false ? INIT_FAILED_MSG : undefined}
+    />
+  )
+);

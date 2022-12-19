@@ -38,7 +38,6 @@ export const setupPushNotifications = () => {
   PushNotification.configure({
     // (required) Called when a remote or local notification is opened or received
     onNotification: notification => {
-      console.log('Received notification:', notification);
       // process the notification
       if (Platform.OS === 'ios') {
         notification.finish(PushNotificationIOS.FetchResult.NoData);

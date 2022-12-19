@@ -1,6 +1,6 @@
-import React from 'react';
+import React, {useCallback} from 'react';
 import {Image, Text, View} from 'react-native';
-
+import QB from 'quickblox-react-native-sdk';
 import {CHECKMARK, CHECKMARK_DOUBLE} from '../../../images';
 import styles from './styles';
 
@@ -37,10 +37,11 @@ function MessageMeta(props) {
     messageIsMine = false,
     sender,
     withAttachment = false,
+    dialogType,
   } = props;
   const {delivered, read} = getDeliveredAndRead(currentUser, message);
 
-  const getSentBy = React.useCallback(() => {
+  const getSentBy = useCallback(() => {
     if (messageIsMine) {
       return 'You';
     } else {
@@ -48,9 +49,9 @@ function MessageMeta(props) {
     }
   }, [messageIsMine, sender]);
 
-  const getCheckMarks = React.useCallback(() => {
+  const getCheckMarks = useCallback(() => {
     const checkmarkStyle = read ? styles.checkmarkRead : styles.checkmark;
-    if (messageIsMine) {
+    if (messageIsMine && dialogType !== QB.chat.DIALOG_TYPE.PUBLIC_CHAT) {
       return delivered ? (
         <Image source={CHECKMARK_DOUBLE} style={checkmarkStyle} />
       ) : (

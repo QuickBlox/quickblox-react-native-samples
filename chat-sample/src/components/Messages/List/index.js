@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {ActivityIndicator, SectionList, Text, View} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import QB from 'quickblox-react-native-sdk';
@@ -39,15 +39,15 @@ export default function MessagesList(props) {
   } = useMessagesListProps(dialogId);
   const {getMessages, getUsers, markAsRead} = useActions(actions);
   const navigation = useNavigation();
-  const [page, setPage] = React.useState(0);
+  const [page, setPage] = useState(0);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (dialogId && getMessages) {
       getMessages({dialogId, limit: PER_PAGE, skip: page * PER_PAGE});
     }
   }, [dialogId, getMessages, page]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (senderIds.length) {
       const missingUsersIds = senderIds.filter(
         userId => users.findIndex(user => user.id === userId) === -1,
@@ -66,7 +66,7 @@ export default function MessagesList(props) {
     }
   }, [getUsers, loadingUsers, senderIds, users]);
 
-  const loadMore = React.useCallback(() => {
+  const loadMore = useCallback(() => {
     if (loading || !hasMore) {
       return;
     }
@@ -75,13 +75,13 @@ export default function MessagesList(props) {
     setPage(nextPage);
   }, [dialogId, getMessages, hasMore, loading, page]);
 
-  const renderLoadingIndicator = React.useCallback(() => {
+  const renderLoadingIndicator = useCallback(() => {
     return loading ? (
       <ActivityIndicator color={colors.primary} size={30} />
     ) : null;
   }, [loading]);
 
-  const listEmptyComponent = React.useCallback(() => {
+  const listEmptyComponent = useCallback(() => {
     return loading ? null : (
       <View style={styles.messagesListEmptyView}>
         <Text style={styles.messagesListEmptyText}>
@@ -123,17 +123,19 @@ export default function MessagesList(props) {
                 markAsRead(message);
               }
             });
-        }
+      }
       : undefined;
+
+  const renderListHeaderComponent = useCallback(() => (
+    <TypingIndicator dialogId={dialogId} style={styles.typingIndicator} />
+  ), [dialogId]);
 
   return (
     <SectionList
       inverted={true}
       ListEmptyComponent={listEmptyComponent}
       ListFooterComponent={renderLoadingIndicator}
-      ListHeaderComponent={() => (
-        <TypingIndicator dialogId={dialogId} style={styles.typingIndicator} />
-      )}
+      ListHeaderComponent={renderListHeaderComponent}
       onEndReached={loadMore}
       onEndReachedThreshold={0.75}
       onViewableItemsChanged={viewableItemsChanged}

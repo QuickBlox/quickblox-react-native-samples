@@ -1,7 +1,9 @@
-import React from 'react';
-import {FlatList, RefreshControl} from 'react-native';
-import {useSelector} from 'react-redux';
-import {createStructuredSelector} from 'reselect';
+import React, { useEffect, useCallback, memo } from 'react';
+import { FlatList, RefreshControl } from 'react-native';
+import { useSelector } from 'react-redux';
+import { createStructuredSelector } from 'reselect';
+import QB from 'quickblox-react-native-sdk';
+import {differenceBetweenSets} from '../../utils/utils';
 
 import Dialog from './Dialog';
 import {
@@ -11,11 +13,13 @@ import {
   dialogsSelectedSelector,
   dialogsSkipSelector,
   dialogsTotalSelector,
+  usersItemsSelector,
 } from '../../selectors';
-import {dialogGet, dialogSelect} from '../../actionCreators';
-import {useActions} from '../../hooks';
+import { dialogGet, dialogSelect, usersGet } from '../../actionCreators';
+import { useActions } from '../../hooks';
 import styles from './styles';
-import {colors} from '../../theme';
+import { colors } from '../../theme';
+import { showError } from '../../NotificationService';
 
 const selector = createStructuredSelector({
   data: dialogsItemsSelector,
@@ -24,31 +28,59 @@ const selector = createStructuredSelector({
   selected: dialogsSelectedSelector,
   skip: dialogsSkipSelector,
   total: dialogsTotalSelector,
+  users: usersItemsSelector,
 });
 
 const actions = {
   getDialogs: dialogGet,
   selectDialog: dialogSelect,
+  getUsers: usersGet,
 };
 
 function DialogsList(props) {
-  const {onLongPress, onPress, selectable = false} = props;
-  const {data, limit, loading, selected, skip, total} = useSelector(selector);
-  const {getDialogs, selectDialog} = useActions(actions);
+  const { onLongPress, onPress, selectable = false } = props;
+  const { data, limit, loading, selected, skip, total, users } = useSelector(selector);
+  const { getDialogs, selectDialog, getUsers } = useActions(actions);
 
-  React.useEffect(() => {
-    getDialogs({append: true, limit, skip: 0});
+  const getDialogsHandler = (usersIds) => {
+    const savedUsersIds = users && users.length ? new Set(users.map(user => user.id)) : new Set();
+    const loadUsersIds = savedUsersIds.size ? differenceBetweenSets(usersIds, savedUsersIds) : usersIds;
+    if (loadUsersIds.size) {
+      getUsers({
+        append: true,
+        filter: {
+          field: QB.users.USERS_FILTER.FIELD.ID,
+          operator: QB.users.USERS_FILTER.OPERATOR.IN,
+          type: QB.users.USERS_FILTER.TYPE.NUMBER,
+          value: Array.from(loadUsersIds).join(),
+        },
+      });
+    }
+  };
+
+  useEffect(() => {
+    getDialogs({
+      reject: action => showError('Failed to get occupantsIds', action.error),
+      resolve: (usersIds) => {
+        getDialogsHandler(usersIds);
+      }, append: true, limit, skip: 0
+    });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const loadNextPage = React.useCallback(() => {
+  const loadNextPage = useCallback(() => {
     if (loading || skip + limit > total) {
       return;
     }
-    getDialogs({append: true, limit, skip: skip + limit});
+    getDialogs({
+      reject: action => showError('Failed to get occupantsIds', action.error),
+      resolve: (usersIds) => {
+        getDialogsHandler(usersIds);
+      }, append: true, limit, skip: skip + limit
+    });
   }, [getDialogs, loading, limit, skip, total]);
 
-  const pressHandler = React.useCallback(
+  const pressHandler = useCallback(
     dialog => {
       if (onPress) {
         onPress(dialog);
@@ -61,13 +93,13 @@ function DialogsList(props) {
     [onPress, selectDialog, selectable],
   );
 
-  const longPressHandler = React.useCallback(
+  const longPressHandler = useCallback(
     dialog => onLongPress && onLongPress(dialog),
     [onLongPress],
   );
 
-  const renderDialog = React.useCallback(
-    ({item}) => {
+  const renderDialog = useCallback(
+    ({ item }) => {
       const isSelected = selected.length && selected.includes(item.id);
       return (
         <Dialog
@@ -85,13 +117,13 @@ function DialogsList(props) {
   return (
     <FlatList
       data={data}
-      keyExtractor={({id}) => id}
+      keyExtractor={({ id }) => id}
       onEndReached={loadNextPage}
       onEndReachedThreshold={0.75}
       refreshControl={
         <RefreshControl
           colors={[colors.primary]}
-          onRefresh={() => getDialogs({limit, skip: 0})}
+          onRefresh={() => getDialogs({ limit, skip: 0 })}
           refreshing={loading}
           tintColor={colors.primary}
         />
@@ -102,4 +134,4 @@ function DialogsList(props) {
   );
 }
 
-export default React.memo(DialogsList);
+export default memo(DialogsList);

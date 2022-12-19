@@ -8,6 +8,9 @@ import QB from 'quickblox-react-native-sdk';
 
 import HeaderButton from '../HeaderButton';
 import {
+  NOTIFICATION_TYPE_LEAVE,
+} from '../../constants';
+import {
   authLoadingSelector,
   authUserSelector,
   dialogsItemsSelector,
@@ -87,7 +90,7 @@ export default function useDialogScreenOptions(
                 body,
                 dialogId: dialog.id,
                 markable: false,
-                properties: {notification_type: 3},
+                properties: {notification_type: NOTIFICATION_TYPE_LEAVE},
                 reject,
                 resolve,
               });

@@ -10,7 +10,7 @@ import {
   USERS_UPDATE_REQUEST,
   USERS_UPDATE_FAIL,
   USERS_UPDATE_SUCCESS,
-} from '../constants'
+} from '../constants';
 
 const initialState = {
   error: undefined,
@@ -20,16 +20,18 @@ const initialState = {
   password: '',
   session: undefined,
   user: undefined,
-}
+};
 
-export default (state = initialState, action) => {
+export default (state = initialState, action) => { 
   switch (action.type) {
-    case AUTH_SET_LOGIN: return { ...state, login: action.payload }
-    case AUTH_SET_PASSWORD: return { ...state, password: action.payload }
+    case AUTH_SET_LOGIN:
+      return {...state, login: action.payload};
+    case AUTH_SET_PASSWORD:
+      return {...state, password: action.payload};
     case AUTH_LOGIN_REQUEST:
     case AUTH_LOGOUT_REQUEST:
     case USERS_UPDATE_REQUEST:
-      return { ...state, loading: true, error: undefined }
+      return {...state, loading: true, error: undefined};
     case AUTH_LOGIN_SUCCESS:
       return {
         ...state,
@@ -39,18 +41,20 @@ export default (state = initialState, action) => {
         password: initialState.password,
         session: action.payload.session,
         user: action.payload.user,
-      }
+      };
     case USERS_UPDATE_SUCCESS:
       return {
         ...state,
         loading: false,
-        user: { ...state.user, ...action.payload }
-      }
+        user: {...state.user, ...action.payload},
+      };
     case AUTH_LOGIN_FAIL:
     case AUTH_LOGOUT_FAIL:
     case USERS_UPDATE_FAIL:
-        return { ...state, loading: false, error: action.error }
-    case AUTH_LOGOUT_SUCCESS: return initialState
-    default: return state
+      return {...state, loading: false, error: action.error};
+    case AUTH_LOGOUT_SUCCESS:
+      return initialState;
+    default:
+      return state;
   }
-}
+};

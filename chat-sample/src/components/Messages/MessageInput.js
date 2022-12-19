@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState, useRef, useEffect, useCallback} from 'react';
 import {
   ActivityIndicator,
   Image,
@@ -30,8 +30,9 @@ import {colors} from '../../theme';
 import {SEND} from '../../images';
 import styles from './styles';
 
-const MAX_FILE_SIZE = 104857600; // 100 MB
-const TYPING_DEBOUNCE = 1000;
+const MB = 1048576;
+const MAX_FILE_SIZE = 100;
+const TYPING_DEBOUNCE = 3000;
 
 const selector = createStructuredSelector({
   isSending: messagesSendingSelector,
@@ -58,13 +59,13 @@ export default function MessageInput(props) {
     uploadFile,
   } = useActions(actions);
 
-  const [message, setMessage] = React.useState('');
-  const [file, setFile] = React.useState(undefined);
-  const [preview, setPreview] = React.useState('');
-  const isTyping = React.useRef(false);
+  const [message, setMessage] = useState('');
+  const [file, setFile] = useState(undefined);
+  const [preview, setPreview] = useState('');
+  const isTyping = useRef(false);
   const debouncedMessage = useDebounce(message, TYPING_DEBOUNCE);
 
-  const allowSelectAttachment = React.useCallback(() => {
+  const allowSelectAttachment = useCallback(() => {
     const fileSelected = Boolean(file || preview);
     if (fileSelected) {
       showError('You can send 1 attachment per message');
@@ -81,12 +82,10 @@ export default function MessageInput(props) {
     }
     if (response.assets && response.assets.length) {
       const [asset] = response.assets;
-      if (asset.fileSize) {
-        if (asset.fileSize > MAX_FILE_SIZE) {
-          return showError(
-            'The uploaded file exceeds maximum file size (100MB)',
-          );
-        }
+      if (asset.fileSize && asset.fileSize > MAX_FILE_SIZE * MB) {
+        return showError(
+          'The uploaded file exceeds maximum file size (100MB)',
+        );
       }
       setPreview(asset.uri);
       uploadFile({
@@ -104,21 +103,28 @@ export default function MessageInput(props) {
   };
 
   const onChangeText = text => {
-    if (!isTyping.current) {
+    if (!isTyping.current && text) {
       sendIsTyping(dialogId);
       isTyping.current = true;
     }
     setMessage(text);
   };
 
-  React.useEffect(() => {
+  const onStoppedTyping = React.useCallback(() => {
     if (isTyping.current) {
       sendStoppedTyping(dialogId);
       isTyping.current = false;
     }
-  }, [debouncedMessage, dialogId, sendStoppedTyping]);
+  }, [dialogId, sendStoppedTyping]);
 
-  const onSendMessage = React.useCallback(() => {
+  useEffect(() => {
+    onStoppedTyping();
+  }, []);
+  useEffect(() => {
+    onStoppedTyping();
+  }, [debouncedMessage, onStoppedTyping]);
+
+  const onSendMessage = useCallback(() => {
     if (isTyping.current) {
       sendStoppedTyping(dialogId);
       isTyping.current = false;
@@ -127,6 +133,7 @@ export default function MessageInput(props) {
       attachments: [],
       body: message.trim(),
       dialogId,
+      markable: true,
     };
     if (file) {
       const {uid: id, contentType} = file;
@@ -138,6 +145,7 @@ export default function MessageInput(props) {
         type = 'video';
       }
       payload.attachments.push({contentType, id, type});
+      payload.body = 'Attachment';
     }
     sendMessage({
       reject: action => showError('Failed to send message', action.error),

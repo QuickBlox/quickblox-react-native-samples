@@ -32,6 +32,11 @@ export const dialogsTotalSelector = createSelector(
   dialogs => dialogs.total,
 );
 
+export const dialogsTypingSelector = createSelector(
+  dialogsSelector,
+  dialogs => dialogs.dialogTyping,
+);
+
 export const dialogByIdRouteParamSelector = createSelector(
   dialogsItemsSelector,
   (_, props) =>
@@ -42,7 +47,8 @@ export const dialogByIdRouteParamSelector = createSelector(
 
 export const dialogByIdOwnPropsSelector = createSelector(
   dialogsItemsSelector,
-  (_, props) => props.dialogId,
+  (_, props) =>
+  props ? props.dialogId : undefined,
   (dialogs, dialogId) =>
     dialogId ? dialogs.find(dialog => dialog.id === dialogId) : undefined,
 );
@@ -53,3 +59,4 @@ export const dialogFromItemOwnPropSelector = createSelector(
   (dialogs, dialogId) =>
     dialogId ? dialogs.find(({id}) => id === dialogId) : undefined,
 );
+

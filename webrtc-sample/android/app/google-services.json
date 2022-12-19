@@ -1,0 +1,451 @@
+{
+  "project_info": {
+    "project_number": "785642683386",
+    "firebase_url": "https://qb-samples.firebaseio.com",
+    "project_id": "qb-samples",
+    "storage_bucket": "qb-samples.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:785642683386:android:e1b29755fa335f05170243",
+        "android_client_info": {
+          "package_name": "com.example.quickblox.flutter.push.sample"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "785642683386-mq65h7ksgvabe7lbmdgvfokdut4ik1vh.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCuoPFXWfO3yyIyPNvRW8zXn5EI6t_R5Gk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "785642683386-mq65h7ksgvabe7lbmdgvfokdut4ik1vh.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "785642683386-8jdp2nk7mdtbq5ripv1nebihhrjor0l1.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.quickblox.sample-react-native-chat"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:785642683386:android:beb270faa2c3a789",
+        "android_client_info": {
+          "package_name": "com.quickblox.sample.chat.java"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "785642683386-mq65h7ksgvabe7lbmdgvfokdut4ik1vh.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCuoPFXWfO3yyIyPNvRW8zXn5EI6t_R5Gk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "785642683386-mq65h7ksgvabe7lbmdgvfokdut4ik1vh.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "785642683386-8jdp2nk7mdtbq5ripv1nebihhrjor0l1.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.quickblox.sample-react-native-chat"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:785642683386:android:1cdc72e9ffd29448",
+        "android_client_info": {
+          "package_name": "com.quickblox.sample.chat.kotlin"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "785642683386-mq65h7ksgvabe7lbmdgvfokdut4ik1vh.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCuoPFXWfO3yyIyPNvRW8zXn5EI6t_R5Gk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "785642683386-mq65h7ksgvabe7lbmdgvfokdut4ik1vh.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "785642683386-8jdp2nk7mdtbq5ripv1nebihhrjor0l1.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.quickblox.sample-react-native-chat"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:785642683386:android:f791a524b73a59fe170243",
+        "android_client_info": {
+          "package_name": "com.quickblox.sample.conference.kotlin"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "785642683386-svhe50kmv1qoibt1ndmnjfe778v6133k.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.quickblox.sample.conference.kotlin",
+            "certificate_hash": "2cb12737ab1e47e6fe312d58e65ce8a778522c91"
+          }
+        },
+        {
+          "client_id": "785642683386-mq65h7ksgvabe7lbmdgvfokdut4ik1vh.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCuoPFXWfO3yyIyPNvRW8zXn5EI6t_R5Gk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "785642683386-mq65h7ksgvabe7lbmdgvfokdut4ik1vh.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "785642683386-8jdp2nk7mdtbq5ripv1nebihhrjor0l1.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.quickblox.sample-react-native-chat"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:785642683386:android:06cb0de4c719ad84",
+        "android_client_info": {
+          "package_name": "com.quickblox.sample.pushnotifications.java"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "785642683386-mq65h7ksgvabe7lbmdgvfokdut4ik1vh.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCuoPFXWfO3yyIyPNvRW8zXn5EI6t_R5Gk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "785642683386-mq65h7ksgvabe7lbmdgvfokdut4ik1vh.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "785642683386-8jdp2nk7mdtbq5ripv1nebihhrjor0l1.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.quickblox.sample-react-native-chat"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:785642683386:android:c2749661061637f0",
+        "android_client_info": {
+          "package_name": "com.quickblox.sample.pushnotifications.kotlin"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "785642683386-mq65h7ksgvabe7lbmdgvfokdut4ik1vh.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCuoPFXWfO3yyIyPNvRW8zXn5EI6t_R5Gk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "785642683386-mq65h7ksgvabe7lbmdgvfokdut4ik1vh.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "785642683386-8jdp2nk7mdtbq5ripv1nebihhrjor0l1.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.quickblox.sample-react-native-chat"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:785642683386:android:04841950aa8c3d93",
+        "android_client_info": {
+          "package_name": "com.quickblox.sample.reactnative.chat"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "785642683386-mq65h7ksgvabe7lbmdgvfokdut4ik1vh.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCuoPFXWfO3yyIyPNvRW8zXn5EI6t_R5Gk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "785642683386-mq65h7ksgvabe7lbmdgvfokdut4ik1vh.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "785642683386-8jdp2nk7mdtbq5ripv1nebihhrjor0l1.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.quickblox.sample-react-native-chat"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:785642683386:android:2c689948839916bc",
+        "android_client_info": {
+          "package_name": "com.quickblox.sample.reactnative.webrtc"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "785642683386-mq65h7ksgvabe7lbmdgvfokdut4ik1vh.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCuoPFXWfO3yyIyPNvRW8zXn5EI6t_R5Gk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "785642683386-mq65h7ksgvabe7lbmdgvfokdut4ik1vh.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "785642683386-8jdp2nk7mdtbq5ripv1nebihhrjor0l1.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.quickblox.sample-react-native-chat"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:785642683386:android:89e85829a8bb1529170243",
+        "android_client_info": {
+          "package_name": "com.quickblox.sample.videochat.conference.java"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "785642683386-mq65h7ksgvabe7lbmdgvfokdut4ik1vh.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCuoPFXWfO3yyIyPNvRW8zXn5EI6t_R5Gk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "785642683386-mq65h7ksgvabe7lbmdgvfokdut4ik1vh.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "785642683386-8jdp2nk7mdtbq5ripv1nebihhrjor0l1.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.quickblox.sample-react-native-chat"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:785642683386:android:99e5b55a490c901c",
+        "android_client_info": {
+          "package_name": "com.quickblox.sample.videochat.java"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "785642683386-mq65h7ksgvabe7lbmdgvfokdut4ik1vh.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCuoPFXWfO3yyIyPNvRW8zXn5EI6t_R5Gk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "785642683386-mq65h7ksgvabe7lbmdgvfokdut4ik1vh.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "785642683386-8jdp2nk7mdtbq5ripv1nebihhrjor0l1.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.quickblox.sample-react-native-chat"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:785642683386:android:ac22e0d1b3a3e86b",
+        "android_client_info": {
+          "package_name": "com.quickblox.sample.videochat.kotlin"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "785642683386-mq65h7ksgvabe7lbmdgvfokdut4ik1vh.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCuoPFXWfO3yyIyPNvRW8zXn5EI6t_R5Gk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "785642683386-mq65h7ksgvabe7lbmdgvfokdut4ik1vh.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "785642683386-8jdp2nk7mdtbq5ripv1nebihhrjor0l1.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.quickblox.sample-react-native-chat"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:785642683386:android:1e8f85c055401959170243",
+        "android_client_info": {
+          "package_name": "com.quickblox.samples.flutter.push"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "785642683386-mq65h7ksgvabe7lbmdgvfokdut4ik1vh.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCuoPFXWfO3yyIyPNvRW8zXn5EI6t_R5Gk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "785642683386-mq65h7ksgvabe7lbmdgvfokdut4ik1vh.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "785642683386-8jdp2nk7mdtbq5ripv1nebihhrjor0l1.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.quickblox.sample-react-native-chat"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
