@@ -18,6 +18,8 @@ import {
   DIALOGS_LEAVE_SUCCESS,
   DIALOGS_SELECT_RESET,
   DIALOGS_SELECT,
+  DIALOGS_ACTIVATE_DIALOG,
+  DIALOGS_DEACTIVATE_DIALOG,
   DIALOGS_SET_FILTER,
   DIALOGS_START_TYPING_FAIL,
   DIALOGS_START_TYPING_REQUEST,
@@ -27,6 +29,7 @@ import {
   DIALOGS_STOP_TYPING_SUCCESS,
   DIALOGS_UNREAD_COUNT_DECREMENT,
   DIALOGS_UNREAD_COUNT_INCREMENT,
+  DIALOGS_UPDATE_TYPING_STATUS
 } from '../constants';
 
 export function dialogGet(params) {
@@ -117,6 +120,14 @@ export function dialogSelectReset() {
   return {type: DIALOGS_SELECT_RESET};
 }
 
+export function dialogActivate(dialogId) {
+  return {payload: dialogId, type: DIALOGS_ACTIVATE_DIALOG};
+}
+
+export function dialogDeactivate() {
+  return {type: DIALOGS_DEACTIVATE_DIALOG};
+}
+
 export function dialogStartTyping(dialogId) {
   return {payload: dialogId, type: DIALOGS_START_TYPING_REQUEST};
 }
@@ -139,4 +150,8 @@ export function dialogStopTypingSuccess() {
 
 export function dialogStopTypingFail(error) {
   return {error, type: DIALOGS_STOP_TYPING_FAIL};
+}
+
+export function dialogUpdateTypingStatus(payload) {
+  return {payload, type: DIALOGS_UPDATE_TYPING_STATUS};
 }

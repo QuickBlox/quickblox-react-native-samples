@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect, useLayoutEffect} from 'react';
 import {FlatList, Platform, Text, View} from 'react-native';
 import {useSelector} from 'react-redux';
 import {createStructuredSelector} from 'reselect';
@@ -34,15 +34,16 @@ export default function ViewedBy(props) {
   const data =
     message && message.readIds
       ? message.readIds
-          .map(userId => users.find(({id}) => id === userId))
+          .map(userId => users.find(({id}) => id === userId
+           && id !== message.senderId))
           .filter(Boolean)
       : [];
 
-  React.useEffect(() => {
-    if (message) {
+  useEffect(() => {
       const readIds = message.readIds ? message.readIds : [];
       const loadUsers = readIds.filter(
-        userId => users.findIndex(user => user.id === userId) === -1,
+        userId => users.findIndex(user => user.id === userId
+           && user.id !== message.senderId) === -1,
       );
       if (loadUsers.length) {
         getUsers({
@@ -55,11 +56,11 @@ export default function ViewedBy(props) {
           },
         });
       }
-    }
   }, [message, getUsers, users]);
 
-  React.useLayoutEffect(() => {
-    const readIds = message && message.readIds ? message.readIds : [];
+  useLayoutEffect(() => {
+    const readIds = message && message.readIds ? message.readIds
+    .filter((id) => id !== message.senderId) : [];
     navigation.setOptions({
       headerRight: () => <View style={commonStyles.headerButtonStub} />,
       headerTitle: () => (

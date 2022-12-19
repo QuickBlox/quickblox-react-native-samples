@@ -23,6 +23,8 @@ const imagePickerOptions = {
   includeBase64: false,
   mediaType: 'photo',
   saveToPhotos: false,
+  quality: 1,
+  selectionLimit: 1,
 };
 
 export default function AttachButton(props) {

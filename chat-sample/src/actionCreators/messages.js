@@ -14,7 +14,12 @@ import {
   MESSAGES_SYSTEM_SEND_FAIL,
   MESSAGES_SYSTEM_SEND_REQUEST,
   MESSAGES_SYSTEM_SEND_SUCCESS,
+  RECEIVED_NEW_MESSAGE,
 } from '../constants';
+
+export function receivedNewMessage(query) {
+  return {payload: query, type: RECEIVED_NEW_MESSAGE};
+}
 
 export function messagesGet(query) {
   return {payload: query, type: MESSAGES_GET_REQUEST};

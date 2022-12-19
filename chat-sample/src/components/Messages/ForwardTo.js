@@ -1,8 +1,9 @@
-import React from 'react';
+import React, {useEffect, useLayoutEffect, useCallback} from 'react';
 import {Text, Pressable, View} from 'react-native';
 import {useSelector} from 'react-redux';
 import {createStructuredSelector} from 'reselect';
 import {SafeAreaView} from 'react-native-safe-area-context';
+import {StackActions} from '@react-navigation/native';
 
 import DialogsList from '../Dialogs/List';
 import {
@@ -33,7 +34,7 @@ export default function ForwardTo(props) {
   );
   const {cancel, sendMessage} = useActions(actions);
 
-  const forwardMessage = React.useCallback(() => {
+  const forwardMessage = useCallback(() => {
     if (!message) {
       return navigation.goBack();
     }
@@ -49,16 +50,19 @@ export default function ForwardTo(props) {
             attachments,
             body,
             dialogId,
+            markable: true,
             properties: {origin_sender_name},
             reject,
             resolve,
           }),
         ),
     );
-    Promise.all(promises).then(() => navigation.goBack());
+    Promise.all(promises).then(() => navigation.dispatch(
+      StackActions.replace('Messages', { dialogId: message.dialogId }))
+    );
   }, [navigation, message, selected, sendMessage, users]);
 
-  React.useLayoutEffect(() => {
+  useLayoutEffect(() => {
     navigation.setOptions({
       headerRight: () => (
         <Pressable
@@ -77,7 +81,7 @@ export default function ForwardTo(props) {
     });
   }, [forwardMessage, navigation, selected]);
 
-  React.useEffect(() => cancel, [cancel]);
+  useEffect(() => cancel, [cancel]);
 
   return (
     <SafeAreaView edges={['bottom']} style={commonStyles.safeArea}>

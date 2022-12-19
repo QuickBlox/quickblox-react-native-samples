@@ -9,6 +9,7 @@ import {
   CHAT_DISCONNECT_REQUEST,
   CHAT_DISCONNECT_SUCCESS,
   CHAT_IS_CONNECTED_SUCCESS,
+  CHAT_RECONNECT_SUCCESS,
 } from '../constants';
 
 const initialState = {
@@ -26,7 +27,7 @@ export default (state = initialState, action) => {
       return {...state, error: undefined, loading: true};
     case CHAT_CONNECT_SUCCESS:
     case QB.chat.EVENT_TYPE.CONNECTED:
-    case QB.chat.EVENT_TYPE.RECONNECTION_SUCCESSFUL:
+    case CHAT_RECONNECT_SUCCESS:
       return {...state, connected: true, loading: false};
     case CHAT_CONNECT_FAIL:
     case CHAT_DISCONNECT_FAIL:

@@ -1,7 +1,5 @@
 import React from 'react';
 import {Pressable, Text, View} from 'react-native';
-
-import TypingIndicator from '../TypingIndicator';
 import Checkbox from '../Checkbox';
 import {colors} from '../../theme';
 import styles from './styles';
@@ -27,7 +25,8 @@ function getLastMessageDateString(dialog) {
     return lastMessageDate
       .toDateString()
       .replace(/(^\w+\s)|(\s\d+$)/g, '')
-      .replace(/(\w+)\s(\w+)/, '$2 $1');
+      .replace(/(\w+)\s(\w+)/, '$2 $1')
+      .replace(/^0?/, '');
   }
   if (lastMessageDate.getDate() === now.getDate()) {
     const hours = lastMessageDate.getHours().toString();
@@ -43,34 +42,27 @@ function getLastMessageDateString(dialog) {
 
 function Dialog(props) {
   const {dialog, isSelected, onLongPress, onPress, selectable = false} = props;
-
   const pressHandler = () => onPress && onPress(dialog);
-
   const longPressHandler = () => onLongPress && onLongPress(dialog);
 
   const dialogBtnStyle = isSelected
     ? [styles.dialogBtn, styles.dialogBtnSelected]
     : styles.dialogBtn;
-  const circleText = dialog.name
-    .split(',')
-    .filter((str, i) => (i < 2 ? str : undefined))
-    .reduce((res, val) => res + val.trim().charAt(0).toUpperCase(), '');
+  const circleText = Array.from(dialog.name)[0].toUpperCase();
   return (
     <Pressable
       android_ripple={{color: colors.primary}}
       onLongPress={longPressHandler}
       onPress={pressHandler}
       style={dialogBtnStyle}>
-      <View style={[styles.dialogCircle, {backgroundColor: dialog.color}]}>
+      <View style={[styles.dialogCircle, { backgroundColor: dialog.color }]}>
         <Text style={styles.dialogCircleText}>{circleText}</Text>
       </View>
       <View style={styles.dialogNameAndLastMessageContainer}>
         <Text numberOfLines={1} style={styles.dialogName}>
           {dialog.name}
         </Text>
-        {dialog.typing && dialog.typing.length ? (
-          <TypingIndicator dialogId={dialog.id} />
-        ) : dialog.lastMessage ? (
+        {dialog.lastMessage ? (
           <Text numberOfLines={1} style={styles.dialogLastMessage}>
             {dialog.lastMessage}
           </Text>

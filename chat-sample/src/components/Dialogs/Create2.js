@@ -16,6 +16,9 @@ import QB from 'quickblox-react-native-sdk';
 
 import FormTextInput from '../FormTextInput';
 import {
+  NOTIFICATION_TYPE_CREATED,
+} from '../../constants';
+import {
   authUserSelector,
   dialogsLoadingSelector,
   messagesSendingSelector,
@@ -110,7 +113,7 @@ function DialogsCreate2(props) {
         body,
         dialogId: dialog.id,
         markable: false,
-        properties: {notification_type: 1},
+        properties: {notification_type: NOTIFICATION_TYPE_CREATED},
         reject: sendMessageError =>
           showError(
             'Failed to notify participants about dialog created',

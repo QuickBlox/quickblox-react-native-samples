@@ -31,6 +31,7 @@ import {
 } from '../actionCreators';
 import {
   CHAT_CONNECT_SUCCESS,
+  CHAT_RECONNECT_SUCCESS,
   DIALOGS_CREATE_REQUEST,
   DIALOGS_EDIT_REQUEST,
   DIALOGS_GET_REQUEST,
@@ -39,61 +40,64 @@ import {
   DIALOGS_START_TYPING_REQUEST,
   DIALOGS_STOP_TYPING_REQUEST,
   MESSAGES_GET_SUCCESS,
+  NOTIFICATION_TYPE_CREATED,
+  NOTIFICATION_TYPE_ADDED,
 } from '../constants';
-import {showError} from '../NotificationService';
-
-const backgroundColors = [
-  '#53c6a2',
-  '#fdd762',
-  '#9261d3',
-  '#43dce7',
-  '#ffcc5a',
-  '#ea4398',
-  '#4a5de1',
-  '#e95555',
-  '#7eda54',
-  '#f9b647',
-];
-const getRandomColor = () => {
-  // eslint-disable-next-line no-bitwise
-  return backgroundColors[(backgroundColors.length * Math.random()) | 0];
-};
+import { showError } from '../NotificationService';
+import { generateColor } from '../utils/utils';
 
 export function* getDialogs(action = {}) {
+  const { resolve, reject, append, ...params } = action.payload || {};
   try {
-    const {append, ...params} = action.payload || {};
-    const savedDialogs = yield select(({dialogs}) => dialogs.dialogs);
+    const savedDialogs = yield select(({ dialogs }) => dialogs.dialogs);
     const response = yield call(QB.chat.getDialogs, params);
+    let usersIds = new Set();
     const joinToDialogs = [];
     for (const dialog of response.dialogs) {
-      if (dialog.type === QB.chat.DIALOG_TYPE.GROUP_CHAT && !dialog.isJoined) {
+      if ((dialog.type === QB.chat.DIALOG_TYPE.GROUP_CHAT ||
+        dialog.type === QB.chat.DIALOG_TYPE.CHAT)) {
+        usersIds = new Set([...usersIds, ...dialog.occupantsIds]);
+      }
+      if ((dialog.type === QB.chat.DIALOG_TYPE.GROUP_CHAT ||
+        dialog.type === QB.chat.DIALOG_TYPE.PUBLIC_CHAT)) {
         joinToDialogs.push(dialog.id);
       }
       const savedDialog = savedDialogs.find(d => d.id === dialog.id);
       if (savedDialog && savedDialog.color) {
         dialog.color = savedDialog.color;
       } else {
-        dialog.color = getRandomColor();
+        dialog.color = generateColor(dialog.id);
       }
     }
-    yield put(dialogGetSuccess({...response, append}));
+    yield put(dialogGetSuccess({ ...response, append }));
+    if (resolve) {
+      resolve(usersIds);
+    }
     if (joinToDialogs.length) {
       yield put(dialogsJoin(joinToDialogs));
     }
   } catch (e) {
-    showError('Failed to get dialogs', e.message);
-    yield put(dialogGetFail(e.message));
+    const result = dialogGetFail(e.message);
+    yield put(result);
+    if (reject) {
+      reject(result);
+    }
   }
 }
 
 export function* createDialog(action = {}) {
-  const {resolve, reject, ...data} = action.payload;
+  const { resolve, reject, ...data } = action.payload;
   try {
     const dialog = yield call(QB.chat.createDialog, data);
-    dialog.color = getRandomColor();
+    let dialogId = dialog.id;
+    if ((dialog.type === QB.chat.DIALOG_TYPE.GROUP_CHAT ||
+      dialog.type === QB.chat.DIALOG_TYPE.PUBLIC_CHAT)) {
+      yield call(QB.chat.joinDialog, { dialogId });
+    }
+    dialog.color = generateColor(dialog.id);
     const result = dialogCreateSuccess(dialog);
     yield put(result);
-    yield call(notifySystemMessage, dialog.id, '1');
+    yield call(notifySystemMessage, dialog.id, dialog.occupantsIds, NOTIFICATION_TYPE_CREATED);
     if (resolve) {
       resolve(result);
     }
@@ -107,16 +111,13 @@ export function* createDialog(action = {}) {
 }
 
 export function* updateDialog(action = {}) {
-  const {resolve, reject, ...update} = action.payload;
+  const { resolve, reject, ...update } = action.payload;
   try {
-    if (update.removeUsers && update.removeUsers.length) {
-      yield call(notifySystemMessage, update.dialogId, '3');
-    }
     const dialog = yield call(QB.chat.updateDialog, update);
     const result = dialogEditSuccess(dialog);
     yield put(result);
     if (update.addUsers && update.addUsers.length) {
-      yield call(notifySystemMessage, dialog.id, '2');
+      yield call(notifySystemMessage, dialog.id, update.addUsers, NOTIFICATION_TYPE_ADDED);
     }
     if (resolve) {
       resolve(result);
@@ -130,16 +131,40 @@ export function* updateDialog(action = {}) {
   }
 }
 
+export function* joinDialogs(action = {}) {
+  try {
+    const savedDialogs = yield select(({ dialogs }) => dialogs.dialogs);
+
+    const joinToDialogs = [];
+    for (const dialog of savedDialogs) {
+      if (dialog.type === QB.chat.DIALOG_TYPE.GROUP_CHAT ||
+        dialog.type === QB.chat.DIALOG_TYPE.PUBLIC_CHAT) {
+        let dialogId = dialog.id
+        const isJoined = yield call(QB.chat.isJoinedDialog, { dialogId });
+        if (!isJoined) {
+          joinToDialogs.push(dialog.id);
+        }
+      }
+    }
+    if (joinToDialogs.length) {
+      yield put(dialogsJoin(joinToDialogs));
+    }
+  } catch (e) {
+    showError('Failed to join dialogs', e.message);
+    yield put(dialogsJoinFail(e.message));
+  }
+}
+
 export function* joinDialog(action = {}) {
   try {
-    const {dialogsIds} = action.payload;
+    const { dialogsIds } = action.payload;
     if (Array.isArray(dialogsIds) && dialogsIds.length) {
-      const connected = yield select(({chat}) => chat.connected);
+      const connected = yield select(({ chat }) => chat.connected);
       if (!connected) {
         yield take([CHAT_CONNECT_SUCCESS, QB.chat.EVENT_TYPE.CONNECTED]);
       }
       const dialogs = yield all(
-        dialogsIds.map(dialogId => call(QB.chat.joinDialog, {dialogId})),
+        dialogsIds.map(dialogId => call(QB.chat.joinDialog, { dialogId })),
       );
       yield put(dialogsJoinSuccess(dialogs));
     } else {
@@ -151,24 +176,32 @@ export function* joinDialog(action = {}) {
 }
 
 export function* leaveDialogs(action = {}) {
-  const {dialogsIds, resolve, reject} = action.payload;
+  const { dialogsIds, resolve, reject } = action.payload;
   try {
-    const {dialogs, limit} = yield select(state => ({
+    const { dialogs, limit, currentUser } = yield select(state => ({
       dialogs: state.dialogs.dialogs,
       limit: state.dialogs.limit,
+      currentUser: state.auth.user,
     }));
     yield all(
       dialogsIds.map(function* (dialogId) {
         const dialog = dialogs.find(item => item.id === dialogId);
-        if (dialog) {
-          yield call(notifySystemMessage, dialogId, '3');
-          yield call(QB.chat.leaveDialog, {dialogId});
+        if (!dialog) {
+          return;
+        }
+        if (dialog.type === QB.chat.DIALOG_TYPE.CHAT) {
+          yield call(QB.chat.deleteDialog, { dialogId });
+        } else if (dialog.type === QB.chat.DIALOG_TYPE.GROUP_CHAT) {
+          yield call(QB.chat.updateDialog, {
+            dialogId: dialogId,
+            removeUsers: [parseInt(currentUser.id, 10)]
+          });
         }
       }),
     );
     const result = dialogsLeaveSuccess(dialogsIds);
     yield put(result);
-    yield put(dialogGet({append: false, limit, skip: 0}));
+    yield put(dialogGet({ append: false, limit, skip: 0 }));
     if (resolve) {
       resolve(result);
     }
@@ -184,7 +217,7 @@ export function* leaveDialogs(action = {}) {
 export function* sendIsTyping(action = {}) {
   try {
     const dialogId = action.payload;
-    yield call(QB.chat.sendIsTyping, {dialogId});
+    yield call(QB.chat.sendIsTyping, { dialogId });
     yield put(dialogStartTypingSuccess());
   } catch (e) {
     yield put(dialogStartTypingFail(e.message));
@@ -194,23 +227,21 @@ export function* sendIsTyping(action = {}) {
 export function* sendStoppedStyping(action = {}) {
   try {
     const dialogId = action.payload;
-    yield call(QB.chat.sendStoppedTyping, {dialogId});
+    yield call(QB.chat.sendStoppedTyping, { dialogId });
     yield put(dialogStopTypingSuccess());
   } catch (e) {
     yield put(dialogStopTypingFail(e.message));
   }
 }
 
-function* notifySystemMessage(dialogId, notification_type) {
-  const {dialogs, user} = yield select(state => ({
+function* notifySystemMessage(dialogId, recipientIds, notification_type) {
+  const { dialogs, user } = yield select(state => ({
     dialogs: state.dialogs.dialogs,
     user: state.auth.user,
   }));
   const dialog = dialogs.find(d => d.id === dialogId);
   if (dialog && dialog.type === QB.chat.DIALOG_TYPE.GROUP_CHAT) {
-    const {occupantsIds = []} = dialog;
-    const userIds = occupantsIds.filter(id => id !== user.id);
-    for (const userId of userIds) {
+    for (const userId of recipientIds) {
       const message = {
         properties: {
           dialog_id: dialog.id,
@@ -229,9 +260,9 @@ function* notifySystemMessage(dialogId, notification_type) {
 
 function* updateDialogLastMessage(action) {
   try {
-    const {dialogId, messages, skip} = action.payload;
+    const { dialogId, messages, skip } = action.payload;
     if (skip === 0 && messages.length) {
-      const dialog = yield select(({dialogs}) =>
+      const dialog = yield select(({ dialogs }) =>
         dialogs.dialogs.find(d => d.id === dialogId),
       );
       if (dialog) {
@@ -240,7 +271,7 @@ function* updateDialogLastMessage(action) {
           return;
         }
         if (message.body && message.body !== dialog.lastMessage) {
-          yield put(dialogEditSuccess({...dialog, lastMessage: message.body}));
+          yield put(dialogEditSuccess({ ...dialog, lastMessage: message.body }));
         } else {
           if (
             message.attachments &&
@@ -248,7 +279,7 @@ function* updateDialogLastMessage(action) {
             dialog.lastMessage !== 'Attachment'
           ) {
             yield put(
-              dialogEditSuccess({...dialog, lastMessage: 'Attachment'}),
+              dialogEditSuccess({ ...dialog, lastMessage: 'Attachment' }),
             );
           }
         }
@@ -260,7 +291,7 @@ function* updateDialogLastMessage(action) {
 }
 
 export default [
-  takeLeading(DIALOGS_GET_REQUEST, getDialogs),
+  takeLeading([DIALOGS_GET_REQUEST, CHAT_CONNECT_SUCCESS, CHAT_RECONNECT_SUCCESS], getDialogs),
   takeLatest(DIALOGS_CREATE_REQUEST, createDialog),
   takeLatest(DIALOGS_EDIT_REQUEST, updateDialog),
   takeEvery(DIALOGS_JOIN_REQUEST, joinDialog),
@@ -268,4 +299,5 @@ export default [
   takeLatest(DIALOGS_START_TYPING_REQUEST, sendIsTyping),
   takeLatest(DIALOGS_STOP_TYPING_REQUEST, sendStoppedStyping),
   takeEvery(MESSAGES_GET_SUCCESS, updateDialogLastMessage),
+  takeLatest([CHAT_CONNECT_SUCCESS, CHAT_RECONNECT_SUCCESS], joinDialogs),
 ];

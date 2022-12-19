@@ -12,56 +12,56 @@ import {
   USERS_UPDATE_FAIL,
   USERS_UPDATE_REQUEST,
   USERS_UPDATE_SUCCESS,
-} from '../constants'
+} from '../constants';
 
 export function usersCreate(data) {
-  return { type: USERS_CREATE_REQUEST, payload: data }
+  return {type: USERS_CREATE_REQUEST, payload: data};
 }
 
 export function usersCreateSuccess(user) {
-  return { type: USERS_CREATE_SUCCESS, payload: user }
+  return {type: USERS_CREATE_SUCCESS, payload: user};
 }
 
 export function usersCreateFail(error) {
-  return { type: USERS_CREATE_FAIL, error }
+  return {type: USERS_CREATE_FAIL, error};
 }
 
 export function usersGet(payload) {
-  return { type: USERS_GET_REQUEST, payload }
+  return {type: USERS_GET_REQUEST, payload};
 }
 
 export function usersGetSuccess(data) {
-  return { type: USERS_GET_SUCCESS, payload: data }
+  return {type: USERS_GET_SUCCESS, payload: data};
 }
 
 export function usersGetFail(error) {
-  return { type: USERS_GET_FAIL, error }
+  return {type: USERS_GET_FAIL, error};
 }
 
 export function usersUpdate(profile) {
-  return { type: USERS_UPDATE_REQUEST, payload: profile }
+  return {type: USERS_UPDATE_REQUEST, payload: profile};
 }
 
 export function usersUpdateSuccess(user) {
-  return { type: USERS_UPDATE_SUCCESS, payload: user }
+  return {type: USERS_UPDATE_SUCCESS, payload: user};
 }
 
 export function usersUpdateFail(error) {
-  return { type: USERS_UPDATE_FAIL, error }
+  return {type: USERS_UPDATE_FAIL, error};
 }
 
 export function usersSelect(payload) {
-  return { type: USERS_SELECT, payload }
+  return {type: USERS_SELECT, payload};
 }
 
 export function usersBulkSelect(userIds) {
-  return { type: USERS_BULK_SELECT, payload: userIds }
+  return {type: USERS_BULK_SELECT, payload: userIds};
 }
 
 export function usersSetFilter(filter) {
-  return { type: USERS_SET_FILTER, payload: filter }
+  return {type: USERS_SET_FILTER, payload: filter};
 }
 
 export function usersSetPage(page) {
-  return { type: USERS_SET_PAGE, payload: page }
+  return {type: USERS_SET_PAGE, payload: page};
 }

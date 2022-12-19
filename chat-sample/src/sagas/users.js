@@ -15,23 +15,7 @@ import {
   USERS_UPDATE_REQUEST,
 } from '../constants';
 import {showError} from '../NotificationService';
-
-const backgroundColors = [
-  '#53c6a2',
-  '#fdd762',
-  '#9261d3',
-  '#43dce7',
-  '#ffcc5a',
-  '#ea4398',
-  '#4a5de1',
-  '#e95555',
-  '#7eda54',
-  '#f9b647',
-];
-const getRandomColor = () => {
-  // eslint-disable-next-line no-bitwise
-  return backgroundColors[(backgroundColors.length * Math.random()) | 0];
-};
+import {generateColor} from '../utils/utils';
 
 const defaultQuery = {
   append: false,
@@ -71,7 +55,7 @@ export function* getUsers(action = {}) {
     const usersWithColor = response.users.map(user => {
       const savedUser = savedUsers.find(u => u.id === user.id);
       const color =
-        savedUser && savedUser.color ? savedUser.color : getRandomColor();
+        savedUser && savedUser.color ? savedUser.color : generateColor(user.id.toString());
       return {...user, color};
     });
     const result = usersGetSuccess({

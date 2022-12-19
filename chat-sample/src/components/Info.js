@@ -16,6 +16,7 @@ import {colors, styles as commonStyles} from '../theme';
 import {LOGO} from '../images';
 import json from '../../package.json';
 import QBjson from 'quickblox-react-native-sdk/package.json';
+import { getBuildNumber } from 'react-native-device-info';
 
 const styles = StyleSheet.create({
   fieldText: {
@@ -139,6 +140,10 @@ export default function Info(props) {
         <View style={styles.formControlView}>
           <Label>Chat endpoint</Label>
           <Field value={chatEndpoint} />
+        </View>
+        <View style={styles.formControlView}>
+          <Label>QA version</Label>
+          <Field value={getBuildNumber()} />
         </View>
       </ScrollView>
       <View style={styles.logoView}>

@@ -96,7 +96,7 @@ function Login(props) {
             />
           </View>
           <View style={commonStyles.formControlView}>
-            <Label>Username</Label>
+            <Label>Display Name</Label>
             <Field
               activeStyle={commonStyles.textInputActive}
               autoCapitalize="none"

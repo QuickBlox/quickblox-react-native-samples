@@ -6,7 +6,7 @@ import RemoteVideo from '../../RemoteVideo';
 import {FILE} from '../../../images';
 import styles from './styles';
 
-function Attachment({attachmentType, attachmentUrl}) {
+function Attachment({attachmentType, attachmentUrl, onLongPress}) {
   const downloadAttachment = React.useCallback(() => {
     if (attachmentUrl) {
       Linking.openURL(attachmentUrl.url);
@@ -16,6 +16,7 @@ function Attachment({attachmentType, attachmentUrl}) {
   if (attachmentType === 'image') {
     return (
       <RemoteImage
+        onLongPress={onLongPress}
         progressiveRenderingEnabled={true}
         resizeMethod="scale"
         source={{uri: attachmentUrl ? attachmentUrl.url : undefined}}
@@ -25,6 +26,7 @@ function Attachment({attachmentType, attachmentUrl}) {
   } else if (attachmentType === 'video') {
     return (
       <RemoteVideo
+        onLongPress={onLongPress}
         paused
         resizeMode="cover"
         source={{uri: attachmentUrl ? attachmentUrl.url : undefined}}
@@ -33,7 +35,7 @@ function Attachment({attachmentType, attachmentUrl}) {
     );
   } else if (attachmentType === 'file') {
     return (
-      <Pressable onPress={downloadAttachment}>
+      <Pressable onPress={downloadAttachment} onLongPress={onLongPress}>
         <Image source={FILE} />
       </Pressable>
     );

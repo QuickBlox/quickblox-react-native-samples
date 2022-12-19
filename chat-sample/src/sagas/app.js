@@ -124,7 +124,7 @@ function* appStateChangeHandler(appState) {
     user: auth.user,
   }));
   if (user) {
-    if (appState.match(/inactive|background/)) {
+    if (appState.match(/background/)) {
       if (connected) {
         yield put(chatDisconnect());
       }

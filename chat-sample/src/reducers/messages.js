@@ -13,6 +13,7 @@ import {
   MESSAGES_MARK_READ_SUCCESS,
   MESSAGES_SYSTEM_SEND_REQUEST,
   MESSAGES_SYSTEM_SEND_SUCCESS,
+  RECEIVED_NEW_MESSAGE,
 } from '../constants';
 
 const initialState = {
@@ -76,7 +77,7 @@ export default (state = initialState, action) => {
     case MESSAGES_SEND_FAIL:
     case MESSAGES_SYSTEM_SEND_FAIL:
       return {...state, error: action.error, sending: false};
-    case QB.chat.EVENT_TYPE.RECEIVED_NEW_MESSAGE: {
+    case RECEIVED_NEW_MESSAGE: {
       const messages = Object.assign({}, state.messages);
       const idsSet = new Set(messages.allIds);
       const message = action.payload;
@@ -87,10 +88,11 @@ export default (state = initialState, action) => {
       messages.byDialogId[message.dialogId][message.id] = message;
       idsSet.add(message.id);
       messages.allIds = Array.from(idsSet);
-      return {...state, messages};
+      return {...state, messages: messages};
     }
     case QB.chat.EVENT_TYPE.MESSAGE_DELIVERED: {
       const byDialogId = {...state.messages.byDialogId};
+      const byId = {...state.messages.byId};
       const {dialogId, messageId, userId} = action.payload;
       if (dialogId in byDialogId) {
         let message = {...byDialogId[dialogId][messageId]};
@@ -105,12 +107,14 @@ export default (state = initialState, action) => {
           message = {...message, deliveredIds: [userId]};
         }
         byDialogId[dialogId][messageId] = message;
+        byId[messageId] = message;
       }
-      return {...state, messages: {...state.messages, byDialogId}};
+      return {...state, messages: {...state.messages, byDialogId, byId}};
     }
     case MESSAGES_MARK_READ_SUCCESS:
     case QB.chat.EVENT_TYPE.MESSAGE_READ: {
       const byDialogId = {...state.messages.byDialogId};
+      const byId = {...state.messages.byId};
       const {dialogId, messageId, userId} = action.payload;
       if (dialogId in byDialogId) {
         let message = {...byDialogId[dialogId][messageId]};
@@ -135,8 +139,9 @@ export default (state = initialState, action) => {
           message = {...message, deliveredIds: [userId]};
         }
         byDialogId[dialogId][messageId] = message;
+        byId[messageId] = message;
       }
-      return {...state, messages: {...state.messages, byDialogId}};
+      return {...state, messages: {...state.messages, byDialogId, byId}};
     }
     case AUTH_LOGOUT_SUCCESS:
       return initialState;

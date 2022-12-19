@@ -9,6 +9,7 @@ import {
   CHAT_IS_CONNECTED_FAIL,
   CHAT_IS_CONNECTED_REQUEST,
   CHAT_IS_CONNECTED_SUCCESS,
+  CHAT_RECONNECT_SUCCESS,
 } from '../constants';
 
 export function chatIsConnected() {
@@ -52,4 +53,8 @@ export function chatDisconnectSuccess() {
 
 export function chatDisconnectFail(error) {
   return {error, type: CHAT_DISCONNECT_FAIL};
+}
+
+export function chatReconnectSuccess() {
+  return {type: CHAT_RECONNECT_SUCCESS};
 }

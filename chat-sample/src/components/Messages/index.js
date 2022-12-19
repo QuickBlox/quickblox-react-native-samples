@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useCallback, useEffect} from 'react';
 import {
   Dimensions,
   KeyboardAvoidingView,
@@ -9,6 +9,7 @@ import {
 import {useSelector} from 'react-redux';
 import {createStructuredSelector} from 'reselect';
 import {SafeAreaView} from 'react-native-safe-area-context';
+import {HeaderBackButton} from '@react-navigation/elements';
 import QB from 'quickblox-react-native-sdk';
 import {CommonActions} from '@react-navigation/native';
 
@@ -16,11 +17,14 @@ import MessagesList from './List';
 import MessageInput from './MessageInput';
 import MoreMenu from './MoreMenu';
 import {authUserSelector, dialogByIdRouteParamSelector} from '../../selectors';
-import {dialogsLeave, messageSend} from '../../actionCreators';
+import {dialogsLeave, messageSend, dialogActivate, dialogDeactivate} from '../../actionCreators';
 import {useActions} from '../../hooks';
-import {styles as commonStyles} from '../../theme';
+import {styles as commonStyles, colors} from '../../theme';
 import styles from './styles';
 import {showError} from '../../NotificationService';
+import {
+  NOTIFICATION_TYPE_LEAVE,
+} from '../../constants';
 
 // taken from https://github.com/ptelad/react-native-iphone-x-helper/blob/master/index.js
 function isIphoneX() {
@@ -72,21 +76,23 @@ const selector = createStructuredSelector({
 const actions = {
   leaveDialogs: dialogsLeave,
   sendMessage: messageSend,
+  activateDialog: dialogActivate,
+  deactivateDialog: dialogDeactivate,
 };
 
 export default function MessagesScreen(props) {
   const {navigation, route} = props;
   const {dialog, user} = useSelector(state => selector(state, props));
-  const {leaveDialogs, sendMessage} = useActions(actions);
+  const {leaveDialogs, sendMessage, activateDialog, deactivateDialog} = useActions(actions);
 
-  const dialogInfoPressHandler = React.useCallback(() => {
+  const dialogInfoPressHandler = useCallback(() => {
     const dialogId = dialog ? dialog.id : route.params.dialogId;
     if (dialogId && navigation) {
       navigation.push('DialogInfo', {dialogId});
     }
   }, [dialog, navigation, route.params]);
 
-  const leavePressHandler = React.useCallback(() => {
+  const leavePressHandler = useCallback(() => {
     const sendLeaveMessage = new Promise((resolve, reject) => {
       if (!dialog) {
         throw new Error('Dialog parameter is missing');
@@ -98,7 +104,7 @@ export default function MessagesScreen(props) {
           body,
           dialogId: dialog.id,
           markable: false,
-          properties: {notification_type: 3},
+          properties: {notification_type: NOTIFICATION_TYPE_LEAVE},
           reject,
           resolve,
         });
@@ -121,9 +127,27 @@ export default function MessagesScreen(props) {
       .catch(action => showError('Failed to leave dialog', action.error));
   }, [dialog, leaveDialogs, navigation, sendMessage, user]);
 
-  React.useEffect(() => {
+  useEffect(() => {
+    const dialogId = dialog ? dialog.id : route.params.dialogId;
+    activateDialog(dialogId);
+  }, []);
+
+  const goBack = () => {
+    deactivateDialog();
+    navigation.goBack();
+  };
+
+  useEffect(() => {
     const navState = navigation.getState();
     navigation.setOptions({
+      headerLeft: () => (
+        <HeaderBackButton
+        labelVisible={false}
+        onPress={goBack}
+        tintColor={colors.white}
+      />
+      ),
+
       headerRight: () =>
         dialog && dialog.type !== QB.chat.DIALOG_TYPE.PUBLIC_CHAT ? (
           <MoreMenu

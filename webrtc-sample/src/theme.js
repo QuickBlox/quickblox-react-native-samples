@@ -15,22 +15,25 @@ export const colors = {
   transparent: 'transparent',
   white: '#ffffff',
   whiteBackground: '#f4f6f9',
-}
+};
 
 export const navigationHeader = {
+  animation: 'fade',
+  headerBackTitleVisible: false,
   headerStyle: {
     backgroundColor: colors.primary,
     elevation: 6,
     shadowColor: colors.primary,
-    shadowOffset: { height: 4, width: 0 },
+    shadowOffset: {height: 4, width: 0},
     shadowOpacity: 0.4,
     shadowRadius: 4,
   },
   headerTintColor: colors.white,
-  headerTitleStyle: { fontWeight: 'bold' },
-}
+  headerTitleAlign: 'center',
+  headerTitleStyle: {fontWeight: 'bold'},
+};
 
 export default {
   colors,
   navigationHeader,
-}
+};

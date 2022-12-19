@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect, useLayoutEffect} from 'react';
 import {FlatList, Platform, Text, View} from 'react-native';
 import {useSelector} from 'react-redux';
 import {createStructuredSelector} from 'reselect';
@@ -26,39 +26,25 @@ const actions = {getUsers: usersGet};
 
 export default function DeliveredTo(props) {
   const {navigation} = props;
-  const {message, loading, users} = useSelector(state =>
+  const { message, loading, users } = useSelector(state =>
     selector(state, props),
   );
-  const {getUsers} = useActions(actions);
+  const { getUsers } = useActions(actions);
 
   const data =
     message && message.deliveredIds
       ? message.deliveredIds
-          .map(userId => users.find(({id}) => id === userId))
-          .filter(Boolean)
+        .map(userId => users.find(({ id }) => id === userId
+         && id !== message.senderId))
+        .filter(Boolean)
       : [];
 
-  React.useLayoutEffect(() => {
-    const deliveredIds =
-      message && message.deliveredIds ? message.deliveredIds : [];
-    navigation.setOptions({
-      headerRight: () => <View style={commonStyles.headerButtonStub} />,
-      headerTitle: () => (
-        <View style={styles.titleView}>
-          <Text style={styles.titleText}>Message delivered to</Text>
-          <Text style={styles.titleSmallText}>
-            {deliveredIds.length} members
-          </Text>
-        </View>
-      ),
-    });
-  }, [message, navigation]);
-
-  React.useEffect(() => {
+  useEffect(() => {
     const deliveredIds =
       message && message.deliveredIds ? message.deliveredIds : [];
     const loadUsers = deliveredIds.filter(
-      userId => users.findIndex(user => user.id === userId) === -1,
+      userId => users.findIndex(user => user.id === userId
+         && user.id !== message.senderId) === -1,
     );
     if (loadUsers.length) {
       getUsers({
@@ -72,6 +58,23 @@ export default function DeliveredTo(props) {
       });
     }
   }, [getUsers, message, users]);
+
+  useLayoutEffect(() => {
+    const deliveredIds =
+      message && message.deliveredIds ? message.deliveredIds
+      .filter((id) => id !== message.senderId) : [];
+    navigation.setOptions({
+      headerRight: () => <View style={commonStyles.headerButtonStub} />,
+      headerTitle: () => (
+        <View style={styles.titleView}>
+          <Text style={styles.titleText}>Message delivered to</Text>
+          <Text style={styles.titleSmallText}>
+            {deliveredIds.length} members
+          </Text>
+        </View>
+      ),
+    });
+  }, [message, navigation]);
 
   const renderUser = ({item}) => <User user={item} />;
 

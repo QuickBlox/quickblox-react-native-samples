@@ -60,12 +60,14 @@ export default StyleSheet.create({
     backgroundColor: colors.whiteBackground,
   },
   headerButton: {
+    color: colors.white,
     alignItems: 'center',
     height: '100%',
     justifyContent: 'center',
     padding: 10,
   },
   headerButtonImage: {
+    tintColor: colors.white,
     height: 28,
     resizeMode: 'center',
     width: 28,

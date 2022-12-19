@@ -1,13 +1,25 @@
-import React from 'react'
-import { connect } from 'react-redux'
-import { StatusBar, StyleSheet, View } from 'react-native'
-import FlashMessage from 'react-native-flash-message'
+import React from 'react';
+import {useDispatch, useSelector} from 'react-redux';
+import {Platform, StatusBar, StyleSheet, View} from 'react-native';
+import FlashMessage from 'react-native-flash-message';
+import {SafeAreaProvider} from 'react-native-safe-area-context';
+import {createStructuredSelector} from 'reselect';
+import QB from 'quickblox-react-native-sdk';
 
-import Navigator from './Navigation'
-import NavigationService from './NavigationService'
-import { appStart } from './actionCreators'
-import { colors } from './theme'
-import config from './QBConfig'
+import Navigator from './Navigation';
+import {
+  appStart,
+  chatConnectAndSubscribe,
+  createPushSubscription,
+} from './actionCreators';
+import {
+  appReadySelector,
+  authLoggedInSelector,
+  authUserSelector,
+  webrtcSessionSelector,
+} from './selectors';
+import {colors} from './theme';
+import config from './QBConfig';
 
 const styles = StyleSheet.create({
   container: {
@@ -21,34 +33,45 @@ const styles = StyleSheet.create({
     flex: 1,
     width: '100%',
   },
-})
+});
 
-class App extends React.Component {
+const selector = createStructuredSelector({
+  appReady: appReadySelector,
+  call:  webrtcSessionSelector,
+  loggedIn: authLoggedInSelector,
+  user: authUserSelector,
+});
 
-  constructor(props) {
-    super(props)
-    props.appStart(config)
-  }
+export default function App() {
+  const dispatch = useDispatch();
+  const {appReady, call, loggedIn, user} = useSelector(selector);
 
-  render() {
-    return (
-      <View style={styles.container}>
-        <StatusBar
-          backgroundColor={colors.primary}
-          barStyle="light-content"
-        />
-        <View style={styles.navigatorView}>
-          <Navigator ref={NavigationService.init} />
-        </View>
-        <FlashMessage position="bottom" />
-      </View>
-    )
-  }
+  React.useLayoutEffect(() => {
+    if (!appReady) {
+      dispatch(appStart(config));
+    }
+  }, []);
 
+  React.useEffect(() => {
+    if (appReady) {
+      if (user) {
+        dispatch(chatConnectAndSubscribe());
+        const channel =
+          Platform.OS === 'ios'
+            ? QB.subscriptions.PUSH_CHANNEL.APNS_VOIP
+            : undefined;
+        dispatch(createPushSubscription(channel));
+      }
+    }
+  }, [appReady, dispatch, user]);
+
+  return (
+    <View style={styles.container}>
+      <StatusBar backgroundColor={colors.primary} barStyle="light-content" />
+      <SafeAreaProvider style={styles.navigatorView}>
+        <Navigator appReady={appReady} call={call} loggedIn={loggedIn} />
+      </SafeAreaProvider>
+      <FlashMessage position="bottom" />
+    </View>
+  );
 }
-
-const mapStateToProps = null
-
-const mapDispatchToProps = { appStart }
-
-export default connect(mapStateToProps, mapDispatchToProps)(App)

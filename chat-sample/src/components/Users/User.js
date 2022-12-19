@@ -4,9 +4,10 @@ import {Pressable, Text, View} from 'react-native';
 import Checkbox from '../Checkbox';
 import {colors} from '../../theme';
 import styles from './styles';
+import {generateColor} from '../../utils/utils';
 
 function User(props) {
-  const {isSelected, onSelect, selectable = false, user} = props;
+  const { isSelected, onSelect, selectable = false, user } = props;
 
   const onUserSelect = () => onSelect && onSelect(user);
 
@@ -14,7 +15,14 @@ function User(props) {
   const btnStyle = isSelected
     ? [styles.userBtn, styles.userBtnSelected]
     : styles.userBtn;
-  const circleBackground = user ? user.color : colors.primaryDisabled;
+
+  let circleBackground = colors.primaryDisabled;
+  if (user && user.color) {
+    circleBackground = user.color;
+  } else if (user && user.id) {
+    circleBackground = generateColor(user.id.toString());
+  }
+
   const circleText = username
     .split(' ')
     .filter((str, i) => (i < 2 ? str : undefined))
@@ -25,7 +33,7 @@ function User(props) {
       disabled={!selectable}
       onPress={onUserSelect}
       style={btnStyle}>
-      <View style={[styles.circleView, {backgroundColor: circleBackground}]}>
+      <View style={[styles.circleView, { backgroundColor: circleBackground }]}>
         <Text numberOfLines={1} style={styles.circleText}>
           {circleText}
         </Text>
