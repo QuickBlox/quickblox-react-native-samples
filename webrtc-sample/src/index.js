@@ -7,6 +7,7 @@ import SplashScreen from './components/SplashScreen';
 import configureStore from './store';
 import rootSaga from './sagas';
 import {setupPushNotifications} from './NotificationService';
+import {GestureHandlerRootView} from 'react-native-gesture-handler';
 
 setupPushNotifications();
 
@@ -17,9 +18,11 @@ const {runSaga, store, persistor} = configureStore();
 runSaga(rootSaga);
 
 export default () => (
-  <Provider store={store}>
-    <PersistGate loading={<SplashScreen />} persistor={persistor}>
-      <App />
-    </PersistGate>
-  </Provider>
+  <GestureHandlerRootView style={{flex: 1}}>
+    <Provider store={store}>
+      <PersistGate loading={<SplashScreen />} persistor={persistor}>
+        <App />
+      </PersistGate>
+    </Provider>
+  </GestureHandlerRootView>
 );

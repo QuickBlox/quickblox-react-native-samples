@@ -1,6 +1,5 @@
 import React from 'react';
 import {SafeAreaView, StatusBar} from 'react-native';
-import InCallManager from 'react-native-incall-manager';
 
 import DialingScreen from './DialingScreen';
 import CallScreen from './CallScreen';
@@ -8,7 +7,7 @@ import {usePrevious} from '../../hooks';
 import {useCallScreen} from './useCallScreen';
 import styles from './styles';
 
-export default function CallScreenComponent({navigation}) {
+export default function CallScreenComponent() {
   const {
     acceptCall,
     audioMuted,
@@ -19,7 +18,6 @@ export default function CallScreenComponent({navigation}) {
     isIncomingCall,
     isLoudspeaker,
     loadMissingUsers,
-    media,
     onCall,
     peers,
     session,
@@ -34,30 +32,10 @@ export default function CallScreenComponent({navigation}) {
   const prevSession = usePrevious(session);
 
   React.useEffect(() => {
-    if (session) {
-      if (!prevSession) {
-        loadMissingUsers();
-      }
-      if (onCall) {
-        if (isIncomingCall) {
-          InCallManager.stopRingtone();
-          InCallManager.start({media});
-        } else {
-          InCallManager.stopRingback();
-        }
-      } else {
-        if (isIncomingCall) {
-          InCallManager.startRingtone('_DEFAULT_');
-        } else {
-          InCallManager.start({media, ringback: '_BUNDLE_'});
-        }
-      }
+    if (session && !prevSession) {
+      loadMissingUsers();
     }
-    return () => {
-      InCallManager.stopRingtone();
-      InCallManager.stop();
-    }
-  }, [session, prevSession, onCall, isIncomingCall, navigation]);
+  }, [session, prevSession]);
 
   return (
     <SafeAreaView style={styles.container}>

@@ -5,11 +5,16 @@ import {
   requestMultiple,
   RESULTS,
 } from 'react-native-permissions';
+import InCallManager from 'react-native-incall-manager';
 
 const REQUIRED_PERMISSIONS =
   Platform.OS === 'ios'
     ? [PERMISSIONS.IOS.CAMERA, PERMISSIONS.IOS.MICROPHONE]
-    : [PERMISSIONS.ANDROID.CAMERA, PERMISSIONS.ANDROID.RECORD_AUDIO, PERMISSIONS.ANDROID.BLUETOOTH_CONNECT];
+    : [
+        PERMISSIONS.ANDROID.CAMERA,
+        PERMISSIONS.ANDROID.RECORD_AUDIO,
+        PERMISSIONS.ANDROID.BLUETOOTH_CONNECT,
+      ];
 
 function isPermissionsGranted(statuses) {
   return REQUIRED_PERMISSIONS.every(
@@ -29,6 +34,8 @@ export function checkAndRequestPermissions() {
       );
       if (askPermissions.length) {
         requestMultiple(REQUIRED_PERMISSIONS).then(results => {
+          // activate InCallManager audio permissions, fix bug for ios when ringback sound not playing in first launch
+          InCallManager.checkRecordPermission();
           if (isPermissionsGranted(results)) {
             return true;
           } else {

@@ -2,6 +2,8 @@ import {NativeEventEmitter} from 'react-native';
 import {eventChannel} from 'redux-saga';
 import {call, put, select, spawn, take} from 'redux-saga/effects';
 import QB from 'quickblox-react-native-sdk';
+import InCallManager from 'react-native-incall-manager';
+import {Platform} from 'react-native';
 
 import {webrtcReject, webrtcHangUp} from '../actionCreators';
 
@@ -54,9 +56,36 @@ function* handleHangUpEvent(event) {
 }
 
 function* handleWebRTCEvent(event) {
+  if (event.type === QB.webrtc.EVENT_TYPE.CALL_END) {
+    const {session} = event.payload;
+    if (session) {
+      // InCallManager.stopRingtone();
+      InCallManager.stop();
+    }
+  } else if (
+    event.type === QB.webrtc.EVENT_TYPE.ACCEPT ||
+    event.type === QB.webrtc.EVENT_TYPE.REJECT
+  ) {
+    InCallManager.stopRingback();
+  } else if (event.type === QB.webrtc.EVENT_TYPE.NOT_ANSWER) {
+    InCallManager.stopRingback();
+
+    if (Platform.OS === 'android') {
+      InCallManager.stopRingtone();
+    }
+  }
+
   if (event.type === QB.webrtc.EVENT_TYPE.CALL) {
+    if (Platform.OS === 'android') {
+      InCallManager.startRingtone('_DEFAULT_');
+    }
+
     yield call(handleCallEvent, event);
   } else if (event.type === QB.webrtc.EVENT_TYPE.HANG_UP) {
+    if (Platform.OS === 'android') {
+      InCallManager.stopRingtone();
+    }
+
     yield call(handleHangUpEvent, event);
   } else {
     yield put(event);

@@ -1,5 +1,7 @@
 import {call, put, takeEvery} from 'redux-saga/effects';
 import QB from 'quickblox-react-native-sdk';
+import InCallManager from 'react-native-incall-manager';
+import {Platform} from 'react-native';
 
 import {
   webrtcInitSuccess,
@@ -59,6 +61,11 @@ export function* callSaga(action) {
   try {
     const {payload} = action;
     const session = yield call(QB.webrtc.call, payload);
+
+    const media =
+      payload.type === QB.webrtc.RTC_SESSION_TYPE.VIDEO ? 'video' : 'audio';
+    InCallManager.start({media, ringback: '_BUNDLE_'});
+
     yield put(webrtcCallSuccess(session));
   } catch (e) {
     yield put(webrtcCallFail(e.message));
@@ -67,6 +74,10 @@ export function* callSaga(action) {
 
 export function* accept(action) {
   try {
+    if (Platform.OS === 'android') {
+      InCallManager.stopRingtone();
+    }
+
     const {payload} = action;
     const session = yield call(QB.webrtc.accept, payload);
     yield put(webrtcAcceptSuccess(session));
@@ -77,6 +88,10 @@ export function* accept(action) {
 
 export function* reject(action) {
   try {
+    if (Platform.OS === 'android') {
+      InCallManager.stopRingtone();
+    }
+
     const {payload} = action;
     const session = yield call(QB.webrtc.reject, payload);
     yield put(webrtcRejectSuccess(session));
@@ -87,6 +102,8 @@ export function* reject(action) {
 
 export function* hangUp(action) {
   try {
+    InCallManager.stopRingback();
+
     const {payload} = action;
     const session = yield call(QB.webrtc.hangUp, payload);
     yield put(webrtcHangUpSuccess(session));

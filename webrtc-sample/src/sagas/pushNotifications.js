@@ -32,10 +32,10 @@ function* getSubscriptions() {
 function* createSubscriptions(pushChannel) {
   try {
     const {token: deviceToken} = yield select(state => state.pushNotifications);
-    const subscriptions = yield call(
-      QB.subscriptions.create,
-      {deviceToken, pushChannel}
-    );
+    const subscriptions = yield call(QB.subscriptions.create, {
+      deviceToken,
+      pushChannel,
+    });
     yield put(createPushSubscriptionSuccess(subscriptions));
     const udid = subscriptions[0].deviceUdid;
     if (udid) {
@@ -48,7 +48,7 @@ function* createSubscriptions(pushChannel) {
 
 function* checkAndCreateSubscriptions(action) {
   try {
-    const {channel} = action.payload
+    const {channel} = action.payload;
     const {udid} = yield select(state => state.pushNotifications);
     let isSubscriptionsExists = false;
     if (udid) {
@@ -134,4 +134,3 @@ export default [
   takeEvery(PUSH_SUBSCRIPTION_DELETE_REQUEST, removeSubscriptions),
   takeEvery(WEBRTC_CALL_SUCCESS, sendPush),
 ];
-
