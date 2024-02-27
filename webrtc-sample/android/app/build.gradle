@@ -1,4 +1,5 @@
 apply plugin: "com.android.application"
+apply plugin: "com.facebook.react"
 
 import com.android.build.OutputFile
 
@@ -73,10 +74,8 @@ import com.android.build.OutputFile
  */
 
 project.ext.react = [
-    enableHermes: true,  // clean and rebuild if changing
+    enableHermes: false,  // clean and rebuild if changing
 ]
-
-apply from: "../../node_modules/react-native/react.gradle"
 
 /**
  * Set this to true to create two separate APKs instead of one:
@@ -167,32 +166,26 @@ android {
     }
   }
 
-  // applicationVariants are e.g. debug, release
-  applicationVariants.all { variant ->
-    variant.outputs.each { output ->
-      // For each separate APK per architecture, set a unique version code as described here:
-      // https://developer.android.com/studio/build/configure-apk-splits.html
-      // Example: versionCode 1 will generate 1001 for armeabi-v7a, 1002 for x86, etc.
-      def versionCodes = ["armeabi-v7a": 1, "x86": 2, "arm64-v8a": 3, "x86_64": 4]
-      def abi = output.getFilter(OutputFile.ABI)
-      if (abi != null) {  // null for the universal-debug, universal-release variants
-        output.versionCodeOverride =
-          defaultConfig.versionCode * 1000 + versionCodes.get(abi)
-      }
-
-    }
+  configurations {
+    all*.exclude group: "com.facebook.react", module: "react-native"
+//    all*.exclude group: "com.facebook.hermes", module: "hermes-engine"
   }
 }
 
 dependencies {
+  implementation "com.facebook.react:react-android"
+
+// Hermes
+//  implementation ("com.facebook.react:hermes-android") {
+//    exclude group: "com.facebook.hermes", module: "hermes-engine"
+//  }
+
   implementation fileTree(dir: "libs", include: ["*.jar"])
   implementation 'androidx.appcompat:appcompat:1.2.0'
   implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
   implementation 'com.google.firebase:firebase-analytics:18.0.3'
   implementation 'com.facebook.fresco:fresco:2.4.0'
   implementation 'com.facebook.fresco:animated-gif:2.0.0'
-  //noinspection GradleDynamicVersion
-  implementation "com.facebook.react:react-native:+"  // From node_modules
 
   debugImplementation("com.facebook.flipper:flipper:${FLIPPER_VERSION}") {
     exclude group:'com.facebook.fbjni'
@@ -207,10 +200,15 @@ dependencies {
     exclude group:'com.facebook.flipper'
   }
 
+  // Hermes
+//  def hermesPath = "../../node_modules/react-native/ReactAndroid/hermes-engine/"
+//  debugImplementation files(hermesPath + "hermes-debug.aar")
+//  releaseImplementation files(hermesPath + "hermesrelease.aar")
+
   if (enableHermes) {
-    def hermesPath = "../../node_modules/hermes-engine/android/"
-    debugImplementation files(hermesPath + "hermes-debug.aar")
-    releaseImplementation files(hermesPath + "hermes-release.aar")
+    implementation("com.facebook.react:hermes-engine:0.70.0") {
+      exclude group: 'com.facebook.react'
+    }
   } else {
     implementation jscFlavor
   }

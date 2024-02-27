@@ -189,13 +189,11 @@ function* onAnswerCallFromApp(action) {
 
 /** Called when the user answers an incoming call */
 function* onAnswerCallAction({callUUID}) {
-  const {session, connected, connecting} = yield select(
-    ({chat, webrtc}) => ({
-      connected: chat.connected,
-      connecting: chat.loading,
-      session: webrtc.session,
-    }),
-  );
+  const {session, connected, connecting} = yield select(({chat, webrtc}) => ({
+    connected: chat.connected,
+    connecting: chat.loading,
+    session: webrtc.session,
+  }));
   if (!connected && !connecting) {
     yield put(chatConnectAndSubscribe());
   }
@@ -213,7 +211,7 @@ function* onAnswerCallAction({callUUID}) {
       if (failure) {
         const {call} = yield race({
           call: take(QB.webrtc.EVENT_TYPE.CALL),
-          timeout: delay(5000)
+          timeout: delay(5000),
         });
         if (call) {
           yield put(webrtcAccept({sessionId: callUUID}));
@@ -234,7 +232,7 @@ function* onAnswerCallAction({callUUID}) {
       }
     }
   } else {
-    __DEV__ &&  console.warn('Got answerCall for unknown session', callUUID);
+    __DEV__ && console.warn('Got answerCall for unknown session', callUUID);
   }
 }
 
@@ -242,7 +240,7 @@ function* onEndCallAction({callUUID}) {
   yield call(RNCallKeep.endCall, callUUID);
   const currentUser = yield select(({auth}) => auth.user);
   let session = yield select(({webrtc}) => webrtc.session);
-  if (!session || session.contactIdentifier) {
+  if (!session) {
     yield take(QB.webrtc.EVENT_TYPE.CALL);
     session = yield select(({webrtc}) => webrtc.session);
   }
@@ -290,6 +288,8 @@ function* onDTMFAction({digits, callUUID}) {}
  */
 function* audioSessionActivated(data) {}
 
+function* didDeactivateAudioSession(data) {}
+
 function* handleCallKeepEvent(action) {
   const {type, payload} = action;
   let handler;
@@ -317,6 +317,9 @@ function* handleCallKeepEvent(action) {
       break;
     case 'didActivateAudioSession':
       handler = audioSessionActivated;
+      break;
+    case 'didDeactivateAudioSession':
+      handler = didDeactivateAudioSession;
       break;
   }
   if (handler) {

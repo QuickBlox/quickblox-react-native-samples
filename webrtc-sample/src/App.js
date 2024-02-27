@@ -16,6 +16,7 @@ import {
   appReadySelector,
   authLoggedInSelector,
   authUserSelector,
+  webrtcOnCallSelector,
   webrtcSessionSelector,
 } from './selectors';
 import {colors} from './theme';
@@ -37,14 +38,17 @@ const styles = StyleSheet.create({
 
 const selector = createStructuredSelector({
   appReady: appReadySelector,
-  call:  webrtcSessionSelector,
+  call: webrtcSessionSelector,
+  onCall: webrtcOnCallSelector,
   loggedIn: authLoggedInSelector,
   user: authUserSelector,
 });
 
 export default function App() {
   const dispatch = useDispatch();
-  const {appReady, call, loggedIn, user} = useSelector(selector);
+  const {appReady, call, onCall, loggedIn, user} = useSelector(selector);
+  const isiOSCall =
+    Platform.OS === 'ios' && call && user && call.initiatorId !== user.id;
 
   React.useLayoutEffect(() => {
     if (!appReady) {
@@ -69,7 +73,11 @@ export default function App() {
     <View style={styles.container}>
       <StatusBar backgroundColor={colors.primary} barStyle="light-content" />
       <SafeAreaProvider style={styles.navigatorView}>
-        <Navigator appReady={appReady} call={call} loggedIn={loggedIn} />
+        <Navigator
+          appReady={appReady}
+          call={isiOSCall ? onCall : call}
+          loggedIn={loggedIn}
+        />
       </SafeAreaProvider>
       <FlashMessage position="bottom" />
     </View>

@@ -34,6 +34,7 @@ export function* appStart(action = {}) {
   const config = action.payload;
   try {
     yield call(QB.settings.init, config);
+    yield call(QB.settings.enableLogging);
     yield call(
       QB.rtcconfig.setAnswerTimeInterval,
       // eslint-disable-next-line no-undef

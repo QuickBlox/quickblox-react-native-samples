@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {Fragment} from 'react';
 import {View} from 'react-native';
 import QB from 'quickblox-react-native-sdk';
 import WebRTCView from 'quickblox-react-native-sdk/RTCView';
