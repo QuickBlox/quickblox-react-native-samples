@@ -42,7 +42,7 @@ function getTyping(typingUsersIds, users, currentUser) {
     const userNames = typingUsersIds
       .filter(userId => userId !== currentUser.id)
       .map(userId => {
-        const user = users.find(({ id }) => id === parseInt(userId, 10));
+        const user = users.find(({id}) => id === parseInt(userId, 10));
         return user ? user.fullName || user.login : undefined;
       })
       .filter(value => value);
@@ -56,8 +56,9 @@ function getTyping(typingUsersIds, users, currentUser) {
       case 3:
         return `${userNames[0]}, ${userNames[1]} and ${userNames[2]} are typing...`;
       default:
-        return `${userNames[0]}, ${userNames[1]} and ${userNames.length - 2
-          } more are typing...`;
+        return `${userNames[0]}, ${userNames[1]} and ${
+          userNames.length - 2
+        } more are typing...`;
     }
   } else {
     return '';
@@ -65,9 +66,9 @@ function getTyping(typingUsersIds, users, currentUser) {
 }
 
 function TypingIndicator(props) {
-  const { dialogId, style } = props;
-  const { loadUsers, dialogStoppedTypingUser } = useActions(actions);
-  const { dialogTyping, currentUser, users } = useSelector(state =>
+  const {dialogId, style} = props;
+  const {loadUsers, dialogStoppedTypingUser} = useActions(actions);
+  const {dialogTyping, currentUser, users} = useSelector(state =>
     selector(state, props),
   );
   const [timers, setTimers] = useState({});
@@ -78,8 +79,8 @@ function TypingIndicator(props) {
   }, [timers]);
 
   useEffect(() => {
-    setTimers((prevTimers) => {
-      const timers = { ...prevTimers };
+    setTimers(prevTimers => {
+      const timers = {...prevTimers};
 
       if (!dialogTyping) {
         const timerList = Object.values(timers);
@@ -104,7 +105,7 @@ function TypingIndicator(props) {
             dialogId: dialogId,
             userId: typingUserId,
             isTyping: false,
-          }
+          };
           dialogStoppedTypingUser(params);
         }, 6000);
         timers[typingUserId] = timerId;
@@ -116,7 +117,8 @@ function TypingIndicator(props) {
   useEffect(() => {
     const missingUserIds = typingUsersIds.filter(
       userId =>
-        userId !== currentUser.id && !users.some(id => id === parseInt(userId, 10)),
+        userId !== currentUser.id &&
+        !users.some(id => id === parseInt(userId, 10)),
     );
     if (missingUserIds.length) {
       loadUsers({

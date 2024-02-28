@@ -173,9 +173,13 @@ function Message(props) {
     showViewed,
   ]);
 
-  const { body, properties = {} } = message;
+  const {body, properties = {}} = message;
 
-  const allNotify = [NOTIFICATION_TYPE_CREATED, NOTIFICATION_TYPE_ADDED, NOTIFICATION_TYPE_LEAVE];
+  const allNotify = [
+    NOTIFICATION_TYPE_CREATED,
+    NOTIFICATION_TYPE_ADDED,
+    NOTIFICATION_TYPE_LEAVE,
+  ];
   const haveNotificationType = allNotify.includes(properties.notification_type);
   if (haveNotificationType) {
     return (

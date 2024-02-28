@@ -83,9 +83,7 @@ export default function MessageInput(props) {
     if (response.assets && response.assets.length) {
       const [asset] = response.assets;
       if (asset.fileSize && asset.fileSize > MAX_FILE_SIZE * MB) {
-        return showError(
-          'The uploaded file exceeds maximum file size (100MB)',
-        );
+        return showError('The uploaded file exceeds maximum file size (100MB)');
       }
       setPreview(asset.uri);
       uploadFile({

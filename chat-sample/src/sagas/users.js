@@ -55,7 +55,9 @@ export function* getUsers(action = {}) {
     const usersWithColor = response.users.map(user => {
       const savedUser = savedUsers.find(u => u.id === user.id);
       const color =
-        savedUser && savedUser.color ? savedUser.color : generateColor(user.id.toString());
+        savedUser && savedUser.color
+          ? savedUser.color
+          : generateColor(user.id.toString());
       return {...user, color};
     });
     const result = usersGetSuccess({

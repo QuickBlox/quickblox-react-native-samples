@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, {useState, useEffect, useCallback} from 'react';
 import {ActivityIndicator, SectionList, Text, View} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import QB from 'quickblox-react-native-sdk';
@@ -123,12 +123,15 @@ export default function MessagesList(props) {
                 markAsRead(message);
               }
             });
-      }
+        }
       : undefined;
 
-  const renderListHeaderComponent = useCallback(() => (
-    <TypingIndicator dialogId={dialogId} style={styles.typingIndicator} />
-  ), [dialogId]);
+  const renderListHeaderComponent = useCallback(
+    () => (
+      <TypingIndicator dialogId={dialogId} style={styles.typingIndicator} />
+    ),
+    [dialogId],
+  );
 
   return (
     <SectionList

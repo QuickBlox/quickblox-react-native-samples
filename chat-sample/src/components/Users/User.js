@@ -7,7 +7,7 @@ import styles from './styles';
 import {generateColor} from '../../utils/utils';
 
 function User(props) {
-  const { isSelected, onSelect, selectable = false, user } = props;
+  const {isSelected, onSelect, selectable = false, user} = props;
 
   const onUserSelect = () => onSelect && onSelect(user);
 
@@ -33,7 +33,7 @@ function User(props) {
       disabled={!selectable}
       onPress={onUserSelect}
       style={btnStyle}>
-      <View style={[styles.circleView, { backgroundColor: circleBackground }]}>
+      <View style={[styles.circleView, {backgroundColor: circleBackground}]}>
         <Text numberOfLines={1} style={styles.circleText}>
           {circleText}
         </Text>

@@ -55,7 +55,7 @@ function Dialog(props) {
       onLongPress={longPressHandler}
       onPress={pressHandler}
       style={dialogBtnStyle}>
-      <View style={[styles.dialogCircle, { backgroundColor: dialog.color }]}>
+      <View style={[styles.dialogCircle, {backgroundColor: dialog.color}]}>
         <Text style={styles.dialogCircleText}>{circleText}</Text>
       </View>
       <View style={styles.dialogNameAndLastMessageContainer}>

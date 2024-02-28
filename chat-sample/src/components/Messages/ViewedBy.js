@@ -34,33 +34,38 @@ export default function ViewedBy(props) {
   const data =
     message && message.readIds
       ? message.readIds
-          .map(userId => users.find(({id}) => id === userId
-           && id !== message.senderId))
+          .map(userId =>
+            users.find(({id}) => id === userId && id !== message.senderId),
+          )
           .filter(Boolean)
       : [];
 
   useEffect(() => {
-      const readIds = message.readIds ? message.readIds : [];
-      const loadUsers = readIds.filter(
-        userId => users.findIndex(user => user.id === userId
-           && user.id !== message.senderId) === -1,
-      );
-      if (loadUsers.length) {
-        getUsers({
-          append: true,
-          filter: {
-            field: QB.users.USERS_FILTER.FIELD.ID,
-            operator: QB.users.USERS_FILTER.OPERATOR.IN,
-            type: QB.users.USERS_FILTER.TYPE.NUMBER,
-            value: loadUsers.join(),
-          },
-        });
-      }
+    const readIds = message.readIds ? message.readIds : [];
+    const loadUsers = readIds.filter(
+      userId =>
+        users.findIndex(
+          user => user.id === userId && user.id !== message.senderId,
+        ) === -1,
+    );
+    if (loadUsers.length) {
+      getUsers({
+        append: true,
+        filter: {
+          field: QB.users.USERS_FILTER.FIELD.ID,
+          operator: QB.users.USERS_FILTER.OPERATOR.IN,
+          type: QB.users.USERS_FILTER.TYPE.NUMBER,
+          value: loadUsers.join(),
+        },
+      });
+    }
   }, [message, getUsers, users]);
 
   useLayoutEffect(() => {
-    const readIds = message && message.readIds ? message.readIds
-    .filter((id) => id !== message.senderId) : [];
+    const readIds =
+      message && message.readIds
+        ? message.readIds.filter(id => id !== message.senderId)
+        : [];
     navigation.setOptions({
       headerRight: () => <View style={commonStyles.headerButtonStub} />,
       headerTitle: () => (

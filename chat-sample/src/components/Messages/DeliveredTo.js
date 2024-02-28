@@ -26,25 +26,28 @@ const actions = {getUsers: usersGet};
 
 export default function DeliveredTo(props) {
   const {navigation} = props;
-  const { message, loading, users } = useSelector(state =>
+  const {message, loading, users} = useSelector(state =>
     selector(state, props),
   );
-  const { getUsers } = useActions(actions);
+  const {getUsers} = useActions(actions);
 
   const data =
     message && message.deliveredIds
       ? message.deliveredIds
-        .map(userId => users.find(({ id }) => id === userId
-         && id !== message.senderId))
-        .filter(Boolean)
+          .map(userId =>
+            users.find(({id}) => id === userId && id !== message.senderId),
+          )
+          .filter(Boolean)
       : [];
 
   useEffect(() => {
     const deliveredIds =
       message && message.deliveredIds ? message.deliveredIds : [];
     const loadUsers = deliveredIds.filter(
-      userId => users.findIndex(user => user.id === userId
-         && user.id !== message.senderId) === -1,
+      userId =>
+        users.findIndex(
+          user => user.id === userId && user.id !== message.senderId,
+        ) === -1,
     );
     if (loadUsers.length) {
       getUsers({
@@ -61,8 +64,9 @@ export default function DeliveredTo(props) {
 
   useLayoutEffect(() => {
     const deliveredIds =
-      message && message.deliveredIds ? message.deliveredIds
-      .filter((id) => id !== message.senderId) : [];
+      message && message.deliveredIds
+        ? message.deliveredIds.filter(id => id !== message.senderId)
+        : [];
     navigation.setOptions({
       headerRight: () => <View style={commonStyles.headerButtonStub} />,
       headerTitle: () => (

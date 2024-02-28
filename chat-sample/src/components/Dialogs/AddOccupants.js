@@ -7,9 +7,7 @@ import {StackActions} from '@react-navigation/native';
 
 import UsersFilter from '../Users/Filter';
 import UsersList from '../Users/List';
-import {
-  NOTIFICATION_TYPE_ADDED,
-} from '../../constants';
+import {NOTIFICATION_TYPE_ADDED} from '../../constants';
 import {
   authUserSelector,
   chatLoadingSelector,
@@ -65,7 +63,7 @@ function AddOccupants(props) {
   const {currentUser, dialog, loading, selected, users} = useSelector(state =>
     selector(state, props),
   );
-  const { cancel, sendMessage, updateDialog } = useActions(actions);
+  const {cancel, sendMessage, updateDialog} = useActions(actions);
 
   const addOccupantsToDialog = React.useCallback(() => {
     if (dialog && selected.length && updateDialog) {
@@ -76,7 +74,7 @@ function AddOccupants(props) {
         resolve: () => {
           const myName = currentUser.fullName || currentUser.login;
           const newUsersNames = selected.map(userId => {
-            const user = users.find(({ id }) => id === userId);
+            const user = users.find(({id}) => id === userId);
             return user ? user.fullName || user.login : undefined;
           });
           const newOccupantsIds = selected.join(',');
@@ -87,13 +85,14 @@ function AddOccupants(props) {
             markable: false,
             properties: {
               notification_type: NOTIFICATION_TYPE_ADDED,
-              new_occupants_ids: newOccupantsIds
+              new_occupants_ids: newOccupantsIds,
             },
             reject: errorAction =>
               showError('Failed to send message', errorAction.error),
-            resolve: () => navigation.dispatch(
-              StackActions.replace('Messages', { dialogId: dialog.id }),
-            ),
+            resolve: () =>
+              navigation.dispatch(
+                StackActions.replace('Messages', {dialogId: dialog.id}),
+              ),
           });
         },
       });

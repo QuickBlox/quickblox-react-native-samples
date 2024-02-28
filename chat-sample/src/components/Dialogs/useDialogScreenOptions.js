@@ -7,9 +7,7 @@ import {HeaderBackButton} from '@react-navigation/elements';
 import QB from 'quickblox-react-native-sdk';
 
 import HeaderButton from '../HeaderButton';
-import {
-  NOTIFICATION_TYPE_LEAVE,
-} from '../../constants';
+import {NOTIFICATION_TYPE_LEAVE} from '../../constants';
 import {
   authLoadingSelector,
   authUserSelector,
