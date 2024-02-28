@@ -15,9 +15,7 @@ import {StackActions} from '@react-navigation/native';
 import QB from 'quickblox-react-native-sdk';
 
 import FormTextInput from '../FormTextInput';
-import {
-  NOTIFICATION_TYPE_CREATED,
-} from '../../constants';
+import {NOTIFICATION_TYPE_CREATED} from '../../constants';
 import {
   authUserSelector,
   dialogsLoadingSelector,

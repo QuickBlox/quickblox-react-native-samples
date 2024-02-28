@@ -16,7 +16,7 @@ import {colors, styles as commonStyles} from '../theme';
 import {LOGO} from '../images';
 import json from '../../package.json';
 import QBjson from 'quickblox-react-native-sdk/package.json';
-import { getBuildNumber } from 'react-native-device-info';
+import {getBuildNumber} from 'react-native-device-info';
 
 const styles = StyleSheet.create({
   fieldText: {

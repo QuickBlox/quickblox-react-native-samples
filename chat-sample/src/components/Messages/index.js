@@ -17,14 +17,17 @@ import MessagesList from './List';
 import MessageInput from './MessageInput';
 import MoreMenu from './MoreMenu';
 import {authUserSelector, dialogByIdRouteParamSelector} from '../../selectors';
-import {dialogsLeave, messageSend, dialogActivate, dialogDeactivate} from '../../actionCreators';
+import {
+  dialogsLeave,
+  messageSend,
+  dialogActivate,
+  dialogDeactivate,
+} from '../../actionCreators';
 import {useActions} from '../../hooks';
 import {styles as commonStyles, colors} from '../../theme';
 import styles from './styles';
 import {showError} from '../../NotificationService';
-import {
-  NOTIFICATION_TYPE_LEAVE,
-} from '../../constants';
+import {NOTIFICATION_TYPE_LEAVE} from '../../constants';
 
 // taken from https://github.com/ptelad/react-native-iphone-x-helper/blob/master/index.js
 function isIphoneX() {
@@ -83,7 +86,8 @@ const actions = {
 export default function MessagesScreen(props) {
   const {navigation, route} = props;
   const {dialog, user} = useSelector(state => selector(state, props));
-  const {leaveDialogs, sendMessage, activateDialog, deactivateDialog} = useActions(actions);
+  const {leaveDialogs, sendMessage, activateDialog, deactivateDialog} =
+    useActions(actions);
 
   const dialogInfoPressHandler = useCallback(() => {
     const dialogId = dialog ? dialog.id : route.params.dialogId;
@@ -142,10 +146,10 @@ export default function MessagesScreen(props) {
     navigation.setOptions({
       headerLeft: () => (
         <HeaderBackButton
-        labelVisible={false}
-        onPress={goBack}
-        tintColor={colors.white}
-      />
+          labelVisible={false}
+          onPress={goBack}
+          tintColor={colors.white}
+        />
       ),
 
       headerRight: () =>

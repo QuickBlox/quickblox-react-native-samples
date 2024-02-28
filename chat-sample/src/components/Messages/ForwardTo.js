@@ -57,8 +57,10 @@ export default function ForwardTo(props) {
           }),
         ),
     );
-    Promise.all(promises).then(() => navigation.dispatch(
-      StackActions.replace('Messages', { dialogId: message.dialogId }))
+    Promise.all(promises).then(() =>
+      navigation.dispatch(
+        StackActions.replace('Messages', {dialogId: message.dialogId}),
+      ),
     );
   }, [navigation, message, selected, sendMessage, users]);
 

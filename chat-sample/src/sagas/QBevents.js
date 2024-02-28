@@ -34,15 +34,13 @@ import {
 import {getCurrentRoute} from '../Navigation';
 import {showSuccess} from '../NotificationService';
 
-
-
 function* handleUserTyping(payload) {
-  const { currentUser, dialogs, activeDialogId } = yield select(state => ({
+  const {currentUser, dialogs, activeDialogId} = yield select(state => ({
     currentUser: state.auth.user,
     dialogs: state.dialogs.dialogs,
     activeDialogId: state.dialogs.activeDialogId,
   }));
-  const { dialogId, userId, isTyping } = payload;
+  const {dialogId, userId, isTyping} = payload;
   if (userId === currentUser.id) {
     return;
   }
@@ -56,7 +54,7 @@ function* handleUserTyping(payload) {
     dialogId,
     userId,
     isTyping,
-  }
+  };
   yield put(dialogUpdateTypingStatus(params));
 }
 
@@ -79,12 +77,13 @@ function* handleNewMessage(message) {
       lastMessage: message.body,
       lastMessageDateSent: message.dateSent,
       lastMessageUserId: message.senderId,
-    }
+    };
 
     const isMyMessage = currentUser && message.senderId === currentUser.id;
-    const needIncrement = (dialog.type === QB.chat.DIALOG_TYPE.GROUP_CHAT
-      || dialog.type === QB.chat.DIALOG_TYPE.CHAT)
-      && !isMyMessage;
+    const needIncrement =
+      (dialog.type === QB.chat.DIALOG_TYPE.GROUP_CHAT ||
+        dialog.type === QB.chat.DIALOG_TYPE.CHAT) &&
+      !isMyMessage;
 
     if (needIncrement) {
       params.unreadMessagesCount = (dialog.unreadMessagesCount || 0) + 1;
@@ -92,23 +91,36 @@ function* handleNewMessage(message) {
 
     if (message.properties && message.properties.notification_type) {
       if (message.properties.notification_type === NOTIFICATION_TYPE_ADDED) {
-        const newOccupantsIds = message.properties.new_occupants_ids.split(',').map(Number);
-        const occupantsIds = new Set([...dialog.occupantsIds, ...newOccupantsIds]);
+        const newOccupantsIds = message.properties.new_occupants_ids
+          .split(',')
+          .map(Number);
+        const occupantsIds = new Set([
+          ...dialog.occupantsIds,
+          ...newOccupantsIds,
+        ]);
         params.occupantsIds = Array.from(occupantsIds);
-      } else if (message.properties.notification_type === NOTIFICATION_TYPE_LEAVE) {
-        params.occupantsIds = dialog.occupantsIds.filter((value) => value !== message.senderId);
+      } else if (
+        message.properties.notification_type === NOTIFICATION_TYPE_LEAVE
+      ) {
+        params.occupantsIds = dialog.occupantsIds.filter(
+          value => value !== message.senderId,
+        );
       }
     }
 
     if (!isMyMessage) {
-      yield spawn(handleUserTyping, { dialogId: dialog.id, userId: message.senderId, isTyping: false });
+      yield spawn(handleUserTyping, {
+        dialogId: dialog.id,
+        userId: message.senderId,
+        isTyping: false,
+      });
     }
 
     yield put(dialogEditSuccess(params));
     yield put(receivedNewMessage(message));
   } else {
     // re-load dialogs to get new dialog(s) or update occupants list
-    yield put(dialogGet({ append: false, limit, skip: 0 }));
+    yield put(dialogGet({append: false, limit, skip: 0}));
   }
 }
 
@@ -133,25 +145,30 @@ function* processChatEvents() {
     while (true) {
       const event = yield take(channel);
       yield put(event);
-      const { type, payload } = event;
+      const {type, payload} = event;
       switch (type) {
         case QB.chat.EVENT_TYPE.RECEIVED_NEW_MESSAGE:
           yield call(handleNewMessage, payload);
           break;
         case QB.chat.EVENT_TYPE.RECEIVED_SYSTEM_MESSAGE:
-          const allNotify = [NOTIFICATION_TYPE_CREATED, NOTIFICATION_TYPE_ADDED];
-          const haveNotificationType = allNotify.includes(payload.properties.notification_type);
+          const allNotify = [
+            NOTIFICATION_TYPE_CREATED,
+            NOTIFICATION_TYPE_ADDED,
+          ];
+          const haveNotificationType = allNotify.includes(
+            payload.properties.notification_type,
+          );
           if (haveNotificationType) {
-            const limit = yield select(({ dialogs }) => dialogs.limit);
-            yield put(dialogGet({ append: true, limit, skip: 0 }));
+            const limit = yield select(({dialogs}) => dialogs.limit);
+            yield put(dialogGet({append: true, limit, skip: 0}));
           }
           break;
         case QB.chat.EVENT_TYPE.RECONNECTION_SUCCESSFUL:
           yield put(chatReconnectSuccess());
           const route = getCurrentRoute();
-          const { name, params = {} } = route;
+          const {name, params = {}} = route;
           if (route && name === 'Messages' && params.dialogId) {
-            yield put(messagesGet({ dialogId: params.dialogId }));
+            yield put(messagesGet({dialogId: params.dialogId}));
           }
           break;
         case QB.chat.EVENT_TYPE.USER_IS_TYPING:
@@ -163,7 +180,7 @@ function* processChatEvents() {
       }
     }
   } catch (e) {
-    yield put({ error: e.message, type: 'CHAT_EVENTS_CHANNEL_ERROR' });
+    yield put({error: e.message, type: 'CHAT_EVENTS_CHANNEL_ERROR'});
   } finally {
     if (yield cancelled()) {
       channel.close();
@@ -174,7 +191,7 @@ function* processChatEvents() {
 function* subscribeToChatEvents() {
   while (true) {
     let task;
-    const { connect } = yield race({
+    const {connect} = yield race({
       connect: take(CHAT_CONNECT_REQUEST),
       disconnect: take(CHAT_DISCONNECT_SUCCESS),
     });

@@ -47,8 +47,7 @@ export const dialogByIdRouteParamSelector = createSelector(
 
 export const dialogByIdOwnPropsSelector = createSelector(
   dialogsItemsSelector,
-  (_, props) =>
-  props ? props.dialogId : undefined,
+  (_, props) => (props ? props.dialogId : undefined),
   (dialogs, dialogId) =>
     dialogId ? dialogs.find(dialog => dialog.id === dialogId) : undefined,
 );
@@ -59,4 +58,3 @@ export const dialogFromItemOwnPropSelector = createSelector(
   (dialogs, dialogId) =>
     dialogId ? dialogs.find(({id}) => id === dialogId) : undefined,
 );
-
