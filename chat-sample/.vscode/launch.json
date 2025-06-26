@@ -6,19 +6,10 @@
     "configurations": [
         {
             "name": "Debug iOS",
-            "request": "launch",
-            "type": "reactnative",
             "cwd": "${workspaceFolder}",
-            "platform": "ios"
-        },
-        {
-            "type": "node",
+            "type": "reactnative",
             "request": "launch",
-            "name": "Launch Program",
-            "skipFiles": [
-                "<node_internals>/**"
-            ],
-            "program": "${workspaceFolder}/index.js"
+            "platform": "ios"
         }
     ]
 }
