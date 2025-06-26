@@ -5,11 +5,12 @@ buildscript {
         googlePlayServicesVersion = "+"
         firebaseMessagingVersion = "21.1.0"
 
-        buildToolsVersion = "33.0.0"
-        minSdkVersion = 21
-        compileSdkVersion = 33
-        targetSdkVersion = 33
-        ndkVersion = "23.1.7779620"
+        buildToolsVersion = "35.0.0"
+        minSdkVersion = 24
+        compileSdkVersion = 35
+        targetSdkVersion = 34
+        ndkVersion = "26.1.10909125"
+        kotlinVersion = "1.9.24"
     }
     repositories {
         google()
@@ -19,7 +20,10 @@ buildscript {
         classpath("com.android.tools.build:gradle")
         classpath 'com.google.gms:google-services:4.3.3'
         classpath("com.facebook.react:react-native-gradle-plugin")
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin")
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
     }
 }
+
+apply plugin: "com.facebook.react.rootproject"
